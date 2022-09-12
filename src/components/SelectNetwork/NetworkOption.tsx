@@ -4,17 +4,16 @@ import { Circle } from '@mui/icons-material'
 
 
 interface NetworkOptionProps {
-    id: number
     title: string
     imgSrc: string
     selected: boolean
-    onClick: (id: number) => void
+    onClick: (title: string) => void
 }
 
 export default function NetworkOption (props: NetworkOptionProps) {
 
     const handleClick = () => {
-        props.onClick(props.id)
+        props.onClick(props.title)
     }
 
     return (
