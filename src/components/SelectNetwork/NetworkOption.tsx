@@ -39,7 +39,7 @@ export default function NetworkOption (props: NetworkOptionProps) {
                     component='img'
                     sx={{ height: 25, width: 25 }}
                     src={props.imgSrc}
-                    alt='Ethereum'
+                    alt={props.title}
                 />
                 <Typography fontSize={16}>{ props.title }</Typography>
             </Box>
