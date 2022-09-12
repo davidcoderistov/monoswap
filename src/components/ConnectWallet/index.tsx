@@ -20,7 +20,7 @@ export default function ConnectWallet (props: ConnectWalletProps) {
                 paddingX: '15px',
                 cursor: 'pointer',
                 '&:hover': {
-                    color: '#0073cf',
+                    color: '#1560bd',
                     backgroundColor: '#172A42',
                 }
             }}
