@@ -14,14 +14,13 @@ export default function ConnectWallet (props: ConnectWalletProps) {
             sx={{
                 display: 'inline-block',
                 backgroundColor: '#172A42',
-                color: '#467DCB',
+                color: '#5090EA',
                 borderRadius: '20px',
                 paddingY: '10px',
                 paddingX: '15px',
                 cursor: 'pointer',
                 '&:hover': {
-                    color: '#1560bd',
-                    backgroundColor: '#172A42',
+                    backgroundColor: '#16273C',
                 }
             }}
             onClick={props.onClick}
