@@ -22,7 +22,7 @@ export default function AccountButton (props: AccountButtonProps) {
                 border: '1px solid #7B679A',
                 borderRadius: '20px',
                 paddingX: '15px',
-                paddingY: '9px',
+                paddingY: '6px',
                 cursor: 'pointer',
             }}
             onClick={props.onClick}

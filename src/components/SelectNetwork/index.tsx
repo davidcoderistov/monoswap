@@ -75,7 +75,8 @@ export default function SelectNetwork () {
                     color: '#FFFFFF',
                     backgroundColor: '#191B1F',
                     borderRadius: '20px',
-                    padding: '10px',
+                    paddingX: '10px',
+                    paddingY: '7px',
                     cursor: 'default',
                 }}
             >

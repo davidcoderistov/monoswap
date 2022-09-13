@@ -16,8 +16,8 @@ export default function ConnectWalletButton (props: ConnectWalletProps) {
                 backgroundColor: '#153d6f70',
                 color: '#5090EA',
                 borderRadius: '20px',
-                paddingY: '10px',
                 paddingX: '15px',
+                paddingY: '7px',
                 cursor: 'pointer',
                 '&:hover': {
                     backgroundColor: '#16273C',
