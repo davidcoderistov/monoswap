@@ -6,14 +6,14 @@ interface ConnectWalletProps {
     onClick: () => void
 }
 
-export default function ConnectWallet (props: ConnectWalletProps) {
+export default function ConnectWalletButton (props: ConnectWalletProps) {
 
     return (
         <Box
             component='div'
             sx={{
                 display: 'inline-block',
-                backgroundColor: '#172A42',
+                backgroundColor: '#153d6f70',
                 color: '#5090EA',
                 borderRadius: '20px',
                 paddingY: '10px',
