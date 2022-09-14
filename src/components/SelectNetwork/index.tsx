@@ -3,6 +3,7 @@ import { Box, Typography, styled } from '@mui/material'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import NetworkOption from './NetworkOption'
+import Image from '../Image'
 
 
 const options = [
@@ -85,12 +86,10 @@ export default function SelectNetwork () {
                     alignItems='center'
                     columnGap='7px'
                 >
-                    <Box
-                        component='img'
-                        sx={{ height: 25, width: 25 }}
+                    <Image
                         src={imgSources[selectedNetwork]}
                         alt={selectedNetwork}
-                    />
+                        size={25} />
                     <Box
                         component='div'
                         display='flex'

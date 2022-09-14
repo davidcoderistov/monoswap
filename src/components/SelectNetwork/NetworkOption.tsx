@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { Circle } from '@mui/icons-material'
+import Image from '../Image'
 
 
 interface NetworkOptionProps {
@@ -34,11 +35,10 @@ export default function NetworkOption (props: NetworkOptionProps) {
                 alignItems='center'
                 columnGap='7px'
             >
-                <Box
-                    component='img'
-                    sx={{ height: 25, width: 25 }}
+                <Image
                     src={props.imgSrc}
                     alt={props.title}
+                    size={25}
                 />
                 <Typography fontSize={16}>{ props.title }</Typography>
             </Box>
