@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react'
 import { Box, InputBase } from '@mui/material'
-import TokenSelect, { TokenSelectProps } from './TokenSelect'
+import Token, { TokenProps } from '../Token'
 
 
 export type TokenInputProps = {
     value: string
     onChange: (value: string) => void
-} & TokenSelectProps
+} & TokenProps
 
 
-export default function TokenInput ({ value, onChange, active, symbol, imgSrc, onClick }: TokenInputProps) {
+export default function TokenInput ({ value, onChange, type, symbol, imgSrc, onClick }: TokenInputProps) {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         onChange(event.target.value)
@@ -24,7 +24,7 @@ export default function TokenInput ({ value, onChange, active, symbol, imgSrc, o
             columnGap='10px'
             paddingX='16px'
             paddingTop='16px'
-            paddingBottom={active ? '40px' : '16px'}
+            paddingBottom={type === 'select' ? '40px' : '16px'}
             bgcolor='#212429'
             borderRadius='20px'
             border='1px solid #191B1F'
@@ -51,8 +51,8 @@ export default function TokenInput ({ value, onChange, active, symbol, imgSrc, o
                     fullWidth
                 />
             </Box>
-            <TokenSelect
-                active={active}
+            <Token
+                type={type}
                 symbol={symbol}
                 imgSrc={imgSrc}
                 onClick={onClick}

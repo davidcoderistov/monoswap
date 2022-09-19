@@ -28,7 +28,7 @@ export default function SwapInterface () {
             <TokenInput
                 value=''
                 onChange={() => {}}
-                active={true}
+                type='select'
                 symbol='Eth'
                 imgSrc='/ethereumlogo.png'
                 onClick={() => {}} />
@@ -36,7 +36,7 @@ export default function SwapInterface () {
             <TokenInput
                 value=''
                 onChange={() => {}}
-                active={false}
+                type='button'
                 symbol='Eth'
                 imgSrc='/ethereumlogo.png'
                 onClick={() => {}} />
