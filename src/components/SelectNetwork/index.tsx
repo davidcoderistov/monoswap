@@ -4,17 +4,8 @@ import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import NetworkOption from './NetworkOption'
 import Image from '../Image'
+import { IMAGES } from '../../config'
 
-
-const options = [
-    'Ethereum',
-    'Polygon',
-]
-
-const imgSources: { [network: string]: string } = {
-    'Ethereum': '/ethereumlogo.png',
-    'Polygon': '/polygonlogo.png',
-}
 
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -26,11 +17,16 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
         minWidth: 240,
         padding: '12px',
     },
-}));
+}))
 
-export default function SelectNetwork () {
+export interface SelectNetworkProps {
+    selectedNetwork: string
+    selectedImgSrc: string | null
+    onChange: (network: string) => void
+}
 
-    const [selectedNetwork, setSelectedNetwork] = useState('Ethereum')
+export default function SelectNetwork ({ selectedNetwork, selectedImgSrc, onChange }: SelectNetworkProps) {
+
     const [open, setOpen] = useState(false)
 
     const handleOpen = () => {
@@ -43,7 +39,7 @@ export default function SelectNetwork () {
 
     const handleSelectNetwork = (title: string) => {
         handleClose()
-        setSelectedNetwork(title)
+        onChange(title)
     }
 
     return (
@@ -53,13 +49,13 @@ export default function SelectNetwork () {
                     <Typography color='gainsboro' margin='5px'>
                         Select a network
                     </Typography>
-                    { options.map((option, index) => (
+                    { Object.keys(IMAGES).map((network, index) => (
                         <NetworkOption
                             key={index}
-                            title={option}
+                            title={network}
                             onClick={handleSelectNetwork}
-                            imgSrc={imgSources[option]}
-                            selected={option === selectedNetwork} />
+                            imgSrc={IMAGES[network]}
+                            selected={network === selectedNetwork} />
                     )) }
                 </React.Fragment>
             }
@@ -86,10 +82,12 @@ export default function SelectNetwork () {
                     alignItems='center'
                     columnGap='7px'
                 >
-                    <Image
-                        src={imgSources[selectedNetwork]}
-                        alt={selectedNetwork}
-                        size={25} />
+                    { selectedImgSrc && (
+                        <Image
+                            src={selectedImgSrc}
+                            alt={selectedNetwork}
+                            size={25} />
+                    )}
                     <Box
                         component='div'
                         display='flex'
