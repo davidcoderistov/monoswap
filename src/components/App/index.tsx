@@ -194,8 +194,8 @@ export default function App () {
             </Box>
             <Box
                 component='div'
-                display='flex'
-                justifyContent='end'
+                position='absolute'
+                left='calc(100% - 390px)'
             >
                 <Snackbar
                     open={Boolean(message)}

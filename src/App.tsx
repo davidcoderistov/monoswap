@@ -50,7 +50,7 @@ function App() {
   return (
       <ThemeProvider theme={theme}>
           <AppContext.Provider value={context}>
-              <Box sx={{ padding: 2 }}>
+              <Box sx={{ padding: '20px' }}>
                   <Box sx={{
                       position: 'fixed',
                       top: 0,
