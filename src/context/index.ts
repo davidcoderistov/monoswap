@@ -21,8 +21,12 @@ export interface Context {
     setProvider: (provider: Provider) => void
     selectedAccount: Account
     setSelectedAccount: (account: Account) => void
+    selectedChainId: number
+    setSelectedChainId: (chainId: number) => void
     connectedTo: Wallet
     setConnectedTo: (connectedTo: Wallet) => void
+    message: string | null
+    setMessage: (message: string | null) => void
     metamask: Metamask
 }
 
@@ -31,8 +35,12 @@ export const defaultValue: Context = {
     setProvider: () => {},
     selectedAccount: null,
     setSelectedAccount: () => {},
+    selectedChainId: 1,
+    setSelectedChainId: () => {},
     connectedTo: null,
     setConnectedTo: () => {},
+    message: null,
+    setMessage: () => {},
     metamask: {
         isInstalled: false,
         setIsInstalled: () => {},
