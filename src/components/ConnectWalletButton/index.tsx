@@ -30,7 +30,7 @@ export default function ConnectWalletButton (props: ConnectWalletProps) {
                 alignItems='center'
             >
                 <Box sx={{ height: 25 }} />
-                <Typography fontSize={16} fontWeight='bold'>Connect Wallet</Typography>
+                <Typography fontSize={16}>Connect Wallet</Typography>
             </Box>
         </Box>
     )
