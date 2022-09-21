@@ -14,6 +14,13 @@ export interface TokenProps {
 
 export default function Token ({ type, symbol, imgSrc, onClick, onClose }: TokenProps) {
 
+    const handleClose = (event: React.MouseEvent<HTMLElement>) => {
+        if (onClose) {
+            event.stopPropagation()
+            onClose()
+        }
+    }
+
     const isButton = type === 'button'
     const isSelect = type === 'select'
     const isClose = type === 'close'
@@ -63,7 +70,7 @@ export default function Token ({ type, symbol, imgSrc, onClick, onClose }: Token
                         display='flex'
                         alignItems='center'
                         sx={{ '&:hover': { backgroundColor: '#40444F' }}}
-                        onClick={onClose}
+                        onClick={handleClose}
                     >
                         <Close sx={{ color: '#FFFFFF', fontSize: '17px', marginTop: '1px' }} />
                     </Box>
