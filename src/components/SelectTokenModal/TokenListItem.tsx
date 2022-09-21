@@ -57,6 +57,7 @@ export default function TokenListItem ({ name, symbol, thumbnail, pinned, loadin
                 flexDirection='row'
                 columnGap='15px'
                 alignItems='center'
+                sx={{ minWidth: 0 }}
             >
                 { loading ? (
                     <Skeleton variant='circular' animation='wave' height={35} width={35} sx={{ backgroundColor: '#2C2F36' }} />
@@ -71,23 +72,21 @@ export default function TokenListItem ({ name, symbol, thumbnail, pinned, loadin
                     display='flex'
                     flexDirection='column'
                     justifyContent='center'
+                    sx={{ minWidth: 0 }}
                 >
                     <Typography sx={{
                         color: '#FFFFFF',
                         lineHeight: 1.2,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                    }}>
+                    }} noWrap>
                         { loading ? (
                             <Skeleton variant='text' animation='wave' width={150} sx={{ backgroundColor: '#2C2F36' }} />
                         ): name }
                     </Typography>
                     <Typography sx={{
+                        color: '#8F96AC',
                         lineHeight: 1.2,
-                        fontSize: '12px',
-                        color: '#8F96AC'
-                    }}>
+                        fontSize: '12px'
+                    }} noWrap>
                         { loading ? (
                             <Skeleton variant='text' animation='wave' width={100} sx={{ backgroundColor: '#2C2F36' }} />
                         ): symbol }
