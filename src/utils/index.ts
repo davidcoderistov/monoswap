@@ -1,4 +1,5 @@
 import { NETWORKS, IMAGES } from '../config'
+import { Blockchain } from '../services'
 import { ethers } from 'ethers'
 
 export function getNetwork (chainId: number): string | null {
@@ -35,6 +36,62 @@ export function getNetwork (chainId: number): string | null {
             return NETWORKS.ARBITRUM.RINKEBY
         case 421613:
             return NETWORKS.ARBITRUM.GORLI
+        default:
+            return null
+    }
+}
+
+export function getMainnet (chainId: number): string | null {
+    switch (chainId) {
+        case 1:
+        case 3:
+        case 4:
+        case 5:
+        case 42:
+        case 11155111:
+            return NETWORKS.ETHEREUM.MAINNET
+        case 137:
+        case 80001:
+            return NETWORKS.POLYGON.MAINNET
+        case 43114:
+        case 43113:
+            return NETWORKS.AVALANCHE.MAINNET
+        case 10:
+        case 420:
+        case 69:
+            return NETWORKS.OPTIMISM.MAINNET
+        case 42161:
+        case 421611:
+        case 421613:
+            return NETWORKS.ARBITRUM.MAINNET
+        default:
+            return null
+    }
+}
+
+export function getAnkrBlockchain (chainId: number): Blockchain | null {
+    switch (chainId) {
+        case 1:
+        case 3:
+        case 4:
+        case 5:
+        case 42:
+        case 11155111:
+            return 'eth'
+        case 137:
+        case 80001:
+            return 'polygon'
+        case 43114:
+        case 43113:
+            return 'avalanche'
+        case 10:
+        case 420:
+        case 69:
+            return 'optimism'
+        case 42161:
+        case 421611:
+        case 421613:
+            return 'arbitrum'
         default:
             return null
     }
