@@ -1,27 +1,33 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import TokenListItem, { Token } from './TokenListItem'
+import TokenListItem from './TokenListItem'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import _range from 'lodash/range'
+import { Token } from '../../types'
 
 
 export interface TokenListProps {
     tokens: Token[]
     hasMore: boolean
+    disabled: boolean
     onNext: () => void
-    onClick: (id: string, index: number) => void
-    onPin: (id: string, index: number) => void
+    onClick: (token: Token) => void
+    onPin: (token: Token) => void
+    scrollRef: React.RefObject<HTMLElement>
 }
 
-export default function TokenList ({ tokens, hasMore, onNext, onClick, onPin }: TokenListProps) {
+export default function TokenList ({ tokens, hasMore, onNext, onClick, onPin, disabled, scrollRef }: TokenListProps) {
 
     return (
         <Box
             component='div'
-            maxHeight='275px'
+            ref={scrollRef}
+            id='scrollableContainer'
             sx={{
                 borderTop: '1px solid #40444F',
                 marginBottom: '20px',
+                height: '275px',
+                overflowY: 'scroll',
             }}
         >
             <InfiniteScroll
@@ -33,10 +39,10 @@ export default function TokenList ({ tokens, hasMore, onNext, onClick, onPin }: 
                         key={key}
                         loading={true} />
                 ))}
-                height={275}
                 endMessage={<></>}
+                scrollableTarget='scrollableContainer'
             >
-                {tokens.map((token, index) => (
+                {tokens.map(token => (
                     <TokenListItem
                         key={token.id}
                         id={token.id}
@@ -44,9 +50,10 @@ export default function TokenList ({ tokens, hasMore, onNext, onClick, onPin }: 
                         symbol={token.symbol}
                         thumbnail={token.thumbnail}
                         pinned={token.pinned}
+                        disabled={disabled}
                         loading={false}
-                        onClick={() => onClick(token.id, index)}
-                        onPin={() => onPin(token.id, index)} />
+                        onClick={() => onClick(token)}
+                        onPin={() => onPin(token)} />
                 ))}
             </InfiniteScroll>
         </Box>
