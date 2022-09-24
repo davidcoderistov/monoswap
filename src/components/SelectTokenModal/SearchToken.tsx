@@ -1,14 +1,15 @@
 import React, { useCallback } from 'react'
-import { InputBase } from '@mui/material'
-import { Search } from '@mui/icons-material'
+import { InputBase, InputAdornment, IconButton } from '@mui/material'
+import { Search, Close } from '@mui/icons-material'
 
 
 export interface SearchTokenProps {
     value: string
     onChange: (value: string) => void
+    onClear: () => void
 }
 
-export default function SearchToken ({ value, onChange }: SearchTokenProps) {
+export default function SearchToken ({ value, onChange, onClear }: SearchTokenProps) {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         onChange(event.target.value)
@@ -31,6 +32,18 @@ export default function SearchToken ({ value, onChange }: SearchTokenProps) {
             fullWidth
             placeholder='Search name or paste address'
             startAdornment={<Search sx={{ paddingLeft: '10px', paddingRight: '5px', color: '#7A7B7D' }} />}
+            endAdornment={
+                value.trim().length > 0 ? (
+                    <InputAdornment position='end'>
+                        <IconButton
+                            sx={{ color: '#FFFFFF' }}
+                            onClick={onClear}
+                        >
+                            <Close />
+                        </IconButton>
+                    </InputAdornment>
+                ) : null
+            }
         />
     )
 }
