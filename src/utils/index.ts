@@ -1,5 +1,5 @@
 import { NETWORKS, IMAGES } from '../config'
-import { Blockchain } from '../services'
+import { Token, Blockchain } from '../types'
 import { ethers } from 'ethers'
 
 export function getNetwork (chainId: number): string | null {
@@ -69,7 +69,7 @@ export function getMainnet (chainId: number): string | null {
     }
 }
 
-export function getAnkrBlockchain (chainId: number): Blockchain | null {
+export function getAnkrBlockchain (chainId: number): Blockchain {
     switch (chainId) {
         case 1:
         case 3:
@@ -93,7 +93,7 @@ export function getAnkrBlockchain (chainId: number): Blockchain | null {
         case 421613:
             return 'arbitrum'
         default:
-            return null
+            return 'eth'
     }
 }
 
@@ -250,4 +250,70 @@ export function getNetworkImgSrc (chainId: number): string | null {
 
 export function getChainIdHexValue (chainId: number): string {
     return ethers.utils.hexValue(chainId)
+}
+
+export function getTokenContractAddresses (blockchain: Blockchain) {
+    switch (blockchain) {
+        case 'eth':
+            return [
+                '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
+                '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
+                '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
+                '0x514910771af9ca656af840dff83e8264ecf986ca', // LINK
+            ]
+        case 'polygon':
+            return [
+                '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
+                '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
+                '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', // WETH
+                '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
+            ]
+        case 'avalanche':
+            return [
+                '0xc7198437980c041c805a1edcba50c1ce5db95118', // USDT
+                '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', // USDC
+                '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab', // WETH
+                '0xd586e7f844cea2f87f50152665bcbc2c279d8d70', // DAI
+            ]
+        case 'optimism':
+            return [
+                '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
+                '0x4200000000000000000000000000000000000042', // OPTIMISM
+                '0x4200000000000000000000000000000000000006', // WETH
+                '0x8700daec35af8ff88c16bdf0418774cb3d7599b4', // Synthetix
+            ]
+        case 'arbitrum':
+            return [
+                '0x05e481b19129b560e921e487adb281e70bdba463', // USDT
+                '0x3405a1bd46b85c5c029483fbecf2f3e611026e45', // USDC
+                '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
+                '0x354a6da3fcde098f8389cad84b0182725c6c91de', // COMPOUND
+            ]
+    }
+}
+
+export function compareTokens (tokenA: Token, tokenB: Token) {
+    if (tokenA.name && tokenB.name) {
+        const nameA = tokenA.name.replace(/\s+/g, '').toLowerCase()
+        const nameB = tokenB.name.replace(/\s+/g, '').toLowerCase()
+        nameB.charAt(0).match(/[a-z]/)
+        if (/^[a-z]+$/.test(nameA) && /^[a-z]+$/.test(nameB)) {
+            if (nameA < nameB) {
+                return -1
+            }
+            if (nameA > nameB) {
+                return 1
+            }
+        } else if (nameA.charAt(0).match(/[a-z]/) && nameB.charAt(0).match(/[a-z]/)) {
+            const charA = nameA.charAt(0)
+            const charB = nameB.charAt(0)
+            if (charA < charB) {
+                return -1
+            }
+            if (charA > charB) {
+                return 1
+            }
+        }
+    }
+    return 0
 }
