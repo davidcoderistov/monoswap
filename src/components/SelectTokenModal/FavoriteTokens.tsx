@@ -1,18 +1,13 @@
 import React from 'react'
 import { Box, Skeleton, Typography } from '@mui/material'
-import Token from '../Token'
+import TokenC from '../Token'
+import { Token } from '../../types'
 
-
-interface TokenI {
-    id: string
-    symbol: string
-    thumbnail: string
-}
 
 interface FavoriteTokensProps {
-    tokens: TokenI[]
-    onClick: (id: string, index: number) => void
-    onClose: (id: string, index: number) => void
+    tokens: Token[]
+    onClick: (token: Token) => void
+    onClose: (token: Token) => void
     loading: boolean
 }
 
@@ -35,14 +30,14 @@ export default function FavoriteTokens ({ tokens, onClick, onClose, loading }: F
                         height={86}
                         sx={{ backgroundColor: '#2C2F36', width: '100%' }} />
                 ): tokens.length > 0 ? (
-                    tokens.map((token, index) => (
-                        <Token
+                    tokens.map(token => (
+                        <TokenC
                             key={token.id}
                             type='close'
                             symbol={token.symbol}
                             imgSrc={token.thumbnail}
-                            onClick={() => onClick(token.id, index)}
-                            onClose={() => onClose(token.id, index)} />
+                            onClick={() => onClick(token)}
+                            onClose={() => onClose(token)} />
                     ))
                 ): (
                     <Box
