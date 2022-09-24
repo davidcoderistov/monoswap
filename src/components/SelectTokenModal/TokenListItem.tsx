@@ -16,12 +16,14 @@ type ViewProps = {
     loading: false
     onClick: () => void
     onPin: () => void
+    disabled: boolean
 } & Token
 
 type LoadingProps = {
     loading: true
     onClick?: never
     onPin?: never
+    disabled?: never
     name?: never
     symbol?: never
     thumbnail?: never
@@ -30,7 +32,7 @@ type LoadingProps = {
 
 export type TokenListItemProps = ViewProps | LoadingProps
 
-export default function TokenListItem ({ name, symbol, thumbnail, pinned, loading, onClick, onPin }: TokenListItemProps) {
+export default function TokenListItem ({ name, symbol, thumbnail, pinned, loading, onClick, onPin, disabled }: TokenListItemProps) {
 
     const handlePin = (event: React.MouseEvent<HTMLElement>) => {
         if (!loading) {
@@ -96,7 +98,12 @@ export default function TokenListItem ({ name, symbol, thumbnail, pinned, loadin
             { loading ? (
                 <Skeleton variant='circular' animation='wave' height={15} width={15} sx={{ backgroundColor: '#2C2F36' }} />
             ): (
-                <IconButton sx={{ color: '#FFFFFF', padding: 0, '&:hover': { backgroundColor: '#40444F' }}} onClick={handlePin}>
+                <IconButton sx={{
+                    color: '#FFFFFF',
+                    padding: 0,
+                    '&:hover': { backgroundColor: '#40444F' },
+                    '&.Mui-disabled': { color: '#363737' }
+                }} onClick={handlePin} disabled={!pinned && disabled}>
                     { pinned ? (
                         <FilterAlt sx={{ fontSize: '20px' }} />
                     ) : (
