@@ -1,17 +1,8 @@
 import axios from 'axios'
+import { Token, Blockchain } from '../types'
 
-export interface Token {
-    address: string
-    blockchain: string
-    name: string
-    symbol: string
-    thumbnail: string
-    decimals: number
-}
 
-export type Blockchain = 'eth' | 'polygon' | 'avalanche' | 'optimism' | 'arbitrum'
-
-export function getTokens (blockchain: Blockchain) {
+export function getTokens (blockchain: Blockchain): Promise<Token[]> {
     return axios.post('https://rpc.ankr.com/multichain', {
         'id': 1,
         'jsonrpc': '2.0',
