@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { Box } from '@mui/material'
 import MainApp from './components/App'
-import AppContext, { Provider, Account, Wallet } from './context'
+import AppContext, { Provider, Account, Wallet, TokenData, initialTokenData } from './context'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 const theme = createTheme({
@@ -20,6 +20,7 @@ function App() {
     const [selectedChainId, setSelectedChainId] = useState(1)
     const [connectedTo, setConnectedTo] = useState<Wallet>(null)
     const [message, setMessage] = useState<string | null>(null)
+    const [tokenData, setTokenData] = useState<TokenData>(initialTokenData)
 
     // Metamask info
     const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false)
@@ -37,6 +38,8 @@ function App() {
         setConnectedTo,
         message,
         setMessage,
+        tokenData,
+        setTokenData,
         metamask: {
             isInstalled: isMetamaskInstalled,
             setIsInstalled: setIsMetamaskInstalled,
