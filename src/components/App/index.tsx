@@ -208,7 +208,7 @@ export default function App () {
                 justifyContent='center'
                 marginTop='80px'
             >
-                <SwapInterface />
+                <SwapInterface onConnectWallet={handleOpenConnectWallet} />
             </Box>
         </React.Fragment>
     )

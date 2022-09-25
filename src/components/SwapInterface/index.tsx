@@ -1,11 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Typography } from '@mui/material'
 import TokenInput from './TokenInput'
 import ArrowDownward from './ArrowDownward'
 import ConnectWalletButton from './ConnectWalletButton'
+import SelectTokenModal from '../SelectTokenModal'
+import { Token } from '../../types'
 
 
-export default function SwapInterface () {
+export interface SwapInterfaceProps {
+    onConnectWallet: () => void
+}
+
+export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) {
+
+    const [selectTokenOpen, setSelectTokenOpen] = useState(false)
+    const [type, setType] = useState<'from' | 'to'>('from')
+
+    const handleOpenFromSelectTokenModal = () => {
+        setType('from')
+        setSelectTokenOpen(true)
+    }
+
+    const handleOpenToSelectTokenModal = () => {
+        setType('to')
+        setSelectTokenOpen(true)
+    }
+
+    const handleCloseSelectTokenModal = () => {
+        setSelectTokenOpen(false)
+    }
+
+    const [fromToken, setFromToken] = useState<Token | null>(null)
+    const [toToken, setToToken] = useState<Token | null>(null)
+
+    const handleSelectToken = (token: Token) => {
+        if (type === 'from') {
+            setFromToken(token)
+        } else if (type === 'to') {
+            setToToken(token)
+        }
+        setSelectTokenOpen(false)
+    }
+
+    const handleSwapTokens = () => {
+        setFromToken(toToken ?? null)
+        setToToken(fromToken ?? null)
+    }
 
     return (
         <Box
@@ -28,19 +68,25 @@ export default function SwapInterface () {
             <TokenInput
                 value=''
                 onChange={() => {}}
-                type='select'
-                symbol='Eth'
-                imgSrc='/ethereumlogo.png'
-                onClick={() => {}} />
-            <ArrowDownward active={false} onClick={() => {}} />
+                type={fromToken ? 'select' : 'button'}
+                symbol={fromToken?.symbol}
+                imgSrc={fromToken?.thumbnail}
+                onClick={handleOpenFromSelectTokenModal} />
+            <ArrowDownward
+                active={Boolean(fromToken) && Boolean(toToken)}
+                onClick={handleSwapTokens} />
             <TokenInput
                 value=''
                 onChange={() => {}}
-                type='button'
-                symbol='Eth'
-                imgSrc='/ethereumlogo.png'
-                onClick={() => {}} />
-            <ConnectWalletButton onClick={() => {}} />
+                type={toToken ? 'select' : 'button'}
+                symbol={toToken?.symbol}
+                imgSrc={toToken?.thumbnail}
+                onClick={handleOpenToSelectTokenModal} />
+            <ConnectWalletButton onClick={onConnectWallet} />
+            <SelectTokenModal
+                open={selectTokenOpen}
+                onClose={handleCloseSelectTokenModal}
+                onTokenSelect={handleSelectToken} />
         </Box>
     )
 }
