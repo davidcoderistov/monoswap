@@ -3,9 +3,9 @@ import { Button } from '@mui/material'
 
 
 type ActionProps = {
-    type: 'connect'
-    onConnect: () => void
-    name?: never
+    type: 'actionable'
+    onClick: () => void
+    name: string
 }
 
 type ViewProps = {
@@ -18,11 +18,11 @@ export type ActionButtonProps = ActionProps | ViewProps
 
 export default function ActionButton (props: ActionButtonProps) {
 
-    const isConnect = props.type === 'connect'
+    const isActionable = props.type === 'actionable'
 
     const handleClick = () => {
-        if (isConnect) {
-            props.onConnect()
+        if (isActionable) {
+            props.onClick()
         }
     }
 
@@ -47,9 +47,9 @@ export default function ActionButton (props: ActionButtonProps) {
                 paddingY: '12px'
             }}
             onClick={handleClick}
-            disabled={!isConnect}
+            disabled={!isActionable}
         >
-            { isConnect ? 'Connect Wallet' : props.name }
+            { props.name }
         </Button>
     )
 }
