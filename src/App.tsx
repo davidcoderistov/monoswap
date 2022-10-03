@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box } from '@mui/material'
 import MainApp from './components/App'
-import AppContext, { Provider, Account, Wallet, TokenData, initialTokenData } from './context'
+import AppContext, { Provider, Account, Wallet } from './context'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { TokenI } from './types'
+import { getTokens } from './services'
+
 
 const theme = createTheme({
     typography: {
@@ -20,7 +23,8 @@ function App() {
     const [selectedChainId, setSelectedChainId] = useState(1)
     const [connectedTo, setConnectedTo] = useState<Wallet>(null)
     const [message, setMessage] = useState<string | null>(null)
-    const [tokenData, setTokenData] = useState<TokenData>(initialTokenData)
+    const [tokens, setTokens] = useState<TokenI[]>([])
+    const [tokensLoading, setTokensLoading] = useState<boolean>(false)
 
     // Metamask info
     const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false)
@@ -38,8 +42,10 @@ function App() {
         setConnectedTo,
         message,
         setMessage,
-        tokenData,
-        setTokenData,
+        tokens,
+        setTokens,
+        tokensLoading,
+        setTokensLoading,
         metamask: {
             isInstalled: isMetamaskInstalled,
             setIsInstalled: setIsMetamaskInstalled,
@@ -49,6 +55,21 @@ function App() {
             setIsError: setIsMetamaskError,
         }
     }
+
+    useEffect(() => {
+        const fetchTokens = async () => {
+            setTokensLoading(true)
+            try {
+                const tokens: TokenI[] = await getTokens()
+                setTokens(tokens)
+                setTokensLoading(false)
+            } catch (e) {
+                console.error(e)
+                setTokensLoading(false)
+            }
+        }
+        fetchTokens()
+    }, [])
 
   return (
       <ThemeProvider theme={theme}>
