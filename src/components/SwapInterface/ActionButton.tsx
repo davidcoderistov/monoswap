@@ -2,29 +2,15 @@ import React from 'react'
 import { Button } from '@mui/material'
 
 
-type ActionProps = {
-    type: 'actionable'
+export type ActionButtonProps = {
+    type: 'actionable' | 'disabled'
+    name: string
     onClick: () => void
-    name: string
 }
-
-type ViewProps = {
-    type: 'disabled'
-    onConnect?: never
-    name: string
-}
-
-export type ActionButtonProps = ActionProps | ViewProps
 
 export default function ActionButton (props: ActionButtonProps) {
 
     const isActionable = props.type === 'actionable'
-
-    const handleClick = () => {
-        if (isActionable) {
-            props.onClick()
-        }
-    }
 
     return (
         <Button
@@ -46,7 +32,7 @@ export default function ActionButton (props: ActionButtonProps) {
                 fontSize: '16px',
                 paddingY: '12px'
             }}
-            onClick={handleClick}
+            onClick={props.onClick}
             disabled={!isActionable}
         >
             { props.name }
