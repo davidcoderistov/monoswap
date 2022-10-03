@@ -47,19 +47,19 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
     }, [mapToken])
 
     const tokens: Token[] = useMemo(() => {
-        switch (blockchain) {
-            case 'eth':
+        switch (selectedChainId) {
+            case 1:
                 return tokenData.map(mapToken)
-            case 'polygon':
+            case 137:
                 return filterMapToken(tokenData, '137')
-            case 'optimism':
+            case 10:
                 return filterMapToken(tokenData, '10')
-            case 'arbitrum':
+            case 42161:
                 return filterMapToken(tokenData, '42161')
             default:
                 return []
         }
-    }, [tokenData, blockchain, mapToken, filterMapToken])
+    }, [tokenData, selectedChainId, mapToken, filterMapToken])
 
     useEffect(() => {
         const addresses = getTokenContractAddresses(blockchain)
