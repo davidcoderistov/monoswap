@@ -101,7 +101,7 @@ export default function App () {
     useEffect(() => {
         if (!isChainSupported(selectedChainId)) {
             const network = getNetwork(selectedChainId)
-            setMessage(`The Monoswap Interface does not support the ${network} network. You won't be able to swap any tokens.`)
+            setMessage(`The Monoswap Interface does not support the ${network} network. Please switch to Ethereum, Polygon, Optimism, Arbitrum or Goerli.`)
         }
     }, [selectedChainId, setMessage])
 
