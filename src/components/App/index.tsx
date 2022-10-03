@@ -8,7 +8,7 @@ import ConnectWalletModal from '../ConnectWalletModal'
 import SwapInterface from '../SwapInterface'
 import AppContext from '../../context'
 import detectEthereumProvider from '@metamask/detect-provider'
-import { getNetwork, getChainId, getRpcUrls, getNetworkImgSrc, getChainIdHexValue } from '../../utils'
+import { getNetwork, getChainId, getRpcUrls, getNetworkImgSrc, getChainIdHexValue, isChainSupported } from '../../utils'
 import { ethers } from 'ethers'
 
 
@@ -98,6 +98,13 @@ export default function App () {
         }
     }, [provider, connectedTo, setSelectedChainId])
 
+    useEffect(() => {
+        if (!isChainSupported(selectedChainId)) {
+            const network = getNetwork(selectedChainId)
+            setMessage(`The Monoswap Interface does not support the ${network} network. You won't be able to swap any tokens.`)
+        }
+    }, [selectedChainId, setMessage])
+
     const handleChangeSelectedNetwork = (network: string) => {
         const chainId = getChainId(network)
         if (chainId) {
@@ -134,12 +141,13 @@ export default function App () {
                                         )
                                         return
                                     }
-                                }
-                                setMessage(
-                                    `Failed to switch networks from the Monoswap Interface.
+                                } else {
+                                    setMessage(
+                                        `Failed to switch networks from the Monoswap Interface.
                                              In order to use Monoswap on ${network}, you must change 
                                              the networks in your wallet.`
-                                )
+                                    )
+                                }
                             }
                         }
                         trySwitchNetwork()
