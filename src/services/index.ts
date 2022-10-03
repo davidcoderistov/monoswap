@@ -1,14 +1,34 @@
-import axios from 'axios'
-import { Token, Blockchain } from '../types'
 
+interface BridgeTokenI {
+    tokenAddress: string
+}
 
-export function getTokens (blockchain: Blockchain): Promise<Token[]> {
-    return axios.post('https://rpc.ankr.com/multichain', {
-        'id': 1,
-        'jsonrpc': '2.0',
-        'method': 'ankr_getCurrencies',
-        'params': {
-            'blockchain': blockchain
-        }
-    })
+interface BridgeInfoI {
+    '10'?: BridgeTokenI
+    '137'?: BridgeTokenI
+    '42161'?: BridgeTokenI
+}
+
+interface ExtensionsI {
+    bridgeInfo: BridgeInfoI
+}
+
+interface TokenI {
+    name: string
+    symbol: string
+    address: string
+    decimals: number
+    chainId: number
+    logoURI: string
+    extensions?: ExtensionsI
+}
+
+export async function getTokens (): Promise<TokenI[]> {
+    try {
+        const response = await fetch('https://tokens.uniswap.org/')
+        const data = await response.json()
+        return data.tokens
+    } catch (e) {
+        throw e
+    }
 }
