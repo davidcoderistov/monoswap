@@ -292,6 +292,19 @@ export function getTokenContractAddresses (blockchain: Blockchain) {
     }
 }
 
+export function isChainSupported (chainId: number) {
+    switch (chainId) {
+        case 1:
+        case 137:
+        case 10:
+        case 42161:
+        case 5:
+            return true
+        default:
+            return false
+    }
+}
+
 export function compareTokens (tokenA: Token, tokenB: Token) {
     if (tokenA.name && tokenB.name) {
         const nameA = tokenA.name.replace(/\s+/g, '').toLowerCase()
