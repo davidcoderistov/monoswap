@@ -1,15 +1,13 @@
-import React, {useState, useEffect, useMemo, useCallback, useRef, useContext } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, useRef, useContext } from 'react'
 import { Dialog, Box } from '@mui/material'
 import SearchTokenModalTitle from './SearchTokenModalTitle'
 import SearchToken from './SearchToken'
 import FavoriteTokens from './FavoriteTokens'
 import TokenList from './TokenList'
 import AppContext from '../../context'
-import { getTokens } from '../../services'
-import { getAnkrBlockchain, getTokenContractAddresses, compareTokens } from '../../utils'
-import _uniqBy from 'lodash/uniqBy'
+import { getAnkrBlockchain, getTokenContractAddresses } from '../../utils'
 import _debounce from 'lodash/debounce'
-import { Token } from '../../types'
+import { TokenI, Token } from '../../types'
 
 
 export interface SelectTokenModalProps {
@@ -20,90 +18,79 @@ export interface SelectTokenModalProps {
 
 export default function SelectTokenModal ({ open, onClose, onTokenSelect }: SelectTokenModalProps) {
 
-    const { tokenData, setTokenData, selectedChainId } = useContext(AppContext)
+    const { selectedChainId, tokens: tokenData, tokensLoading: loading } = useContext(AppContext)
 
     const scrollRef = useRef(null)
 
-    const [tokens, setTokens] = useState<Token[]>([])
     const [favoriteTokens, setFavoriteTokens] = useState<Token[]>([])
     const [query, setQuery] = useState('')
-    const [loading, setLoading] = useState(false)
 
     const blockchain = getAnkrBlockchain(selectedChainId)
 
+    const mapToken = useCallback((token: TokenI): Token => ({
+        id: `${token.name}-${token.symbol}-${token.address}`,
+        name: token.name,
+        symbol: token.symbol,
+        address: token.address,
+        decimals: token.decimals,
+        thumbnail: token.logoURI,
+        pinned: false,
+    }), [])
+
+    const filterMapToken = useCallback((tokens: TokenI[], network: '137' | '10' | '42161'): Token[] => {
+        return tokens
+            .filter(token => token.extensions?.bridgeInfo[network]?.tokenAddress)
+            .map(token => mapToken({
+                ...token,
+                address: token.extensions?.bridgeInfo[network]?.tokenAddress ?? ''
+            }))
+    }, [mapToken])
+
+    const tokens: Token[] = useMemo(() => {
+        switch (blockchain) {
+            case 'eth':
+                return tokenData.map(mapToken)
+            case 'polygon':
+                return filterMapToken(tokenData, '137')
+            case 'optimism':
+                return filterMapToken(tokenData, '10')
+            case 'arbitrum':
+                return filterMapToken(tokenData, '42161')
+            default:
+                return []
+        }
+    }, [tokenData, blockchain, mapToken, filterMapToken])
+
     useEffect(() => {
-        if (tokenData[blockchain].loaded) {
-            const addresses = getTokenContractAddresses(blockchain)
-            const tokens = tokenData[blockchain].tokens
-            const favoriteTokens: Token[] = []
-            const newTokens = tokens.map(token => {
-                if (token.address) {
-                    const tokenAddress = token.address.toLowerCase()
-                    const firstAddress = addresses[0].toLowerCase()
-                    const secondAddress = addresses[1].toLowerCase()
-                    const thirdAddress = addresses[2].toLowerCase()
-                    const fourthAddress = addresses[3].toLowerCase()
-                    if (tokenAddress === firstAddress ||
-                        tokenAddress === secondAddress ||
-                        tokenAddress === thirdAddress ||
-                        tokenAddress === fourthAddress) {
-                        const newToken = {
-                            ...token,
-                            pinned: true,
-                        }
-                        favoriteTokens.push(newToken)
-                        return newToken
+        const addresses = getTokenContractAddresses(blockchain)
+        const favoriteTokens: Token[] = []
+        const newTokens = tokens.map(token => {
+            if (token.address) {
+                const tokenAddress = token.address.toLowerCase()
+                const firstAddress = addresses[0].toLowerCase()
+                const secondAddress = addresses[1].toLowerCase()
+                const thirdAddress = addresses[2].toLowerCase()
+                const fourthAddress = addresses[3].toLowerCase()
+                if (tokenAddress === firstAddress ||
+                    tokenAddress === secondAddress ||
+                    tokenAddress === thirdAddress ||
+                    tokenAddress === fourthAddress) {
+                    const newToken = {
+                        ...token,
+                        pinned: true,
                     }
-                }
-                return token
-            })
-            setTokens(newTokens)
-            setFavoriteTokens(favoriteTokens)
-            setCurrentTokens(Array.from(newTokens).slice(0, 20))
-            setQuery('')
-            setStart(0)
-            setEnd(20)
-        } else {
-            const loadTokens = async () => {
-                try {
-                    setLoading(true)
-                    const r: any = await getTokens(blockchain)
-                    const tokens: Token[] | null = r?.data?.result?.currencies
-                    if (Array.isArray(tokens)) {
-                        const data = Array.from(
-                            _uniqBy(
-                                tokens
-                                    .filter(token => {
-                                        return token.address && token.address.trim().length > 0 &&
-                                            token.name && token.name.trim().length > 0 &&
-                                            token.symbol && token.symbol.trim().length > 0 &&
-                                            token.thumbnail && token.thumbnail.trim().length > 0
-                                    })
-                                    .map(token => ({
-                                        ...token,
-                                        id: `${token.name}-${token.symbol}-${token.decimals}`,
-                                        pinned: false,
-                                    })),
-                                'id'
-                            )
-                        ).sort(compareTokens)
-                        setTokenData({
-                            ...tokenData,
-                            [blockchain]: {
-                                tokens: data,
-                                loaded: true,
-                            }
-                        })
-                        setLoading(false)
-                    }
-                } catch (e) {
-                    setLoading(false)
-                    console.error(e)
+                    favoriteTokens.push(newToken)
+                    return newToken
                 }
             }
-            loadTokens()
-        }
-    }, [tokenData, setTokenData, blockchain])
+            return token
+        })
+        setFavoriteTokens(favoriteTokens)
+        setCurrentTokens(Array.from(newTokens).slice(0, 20))
+        setQuery('')
+        setStart(0)
+        setEnd(20)
+    }, [tokens, blockchain])
 
     const [currentTokens, setCurrentTokens] = useState<Token[]>([])
     const [hasMore, setHasMore] = useState(true)
