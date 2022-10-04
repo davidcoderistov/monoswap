@@ -330,3 +330,24 @@ export function compareTokens (tokenA: Token, tokenB: Token) {
     }
     return 0
 }
+
+export function getAlchemyBaseUrl (chainId: number) {
+    switch (chainId) {
+        case 1:
+            return 'https://eth-mainnet.alchemyapi.io/v2/'
+        case 5:
+            return 'https://eth-goerli.alchemyapi.io/v2/'
+        case 137:
+            return 'https://polygon-mainnet.g.alchemy.com/v2/'
+        case 10:
+            return 'https://opt-mainnet.g.alchemy.com/v2/'
+        case 42161:
+            return 'https://arb-mainnet.g.alchemy.com/v2/'
+        default:
+            return null
+    }
+}
+
+export function roundTo (number: number, precision: number) {
+    return parseFloat(number.toFixed(precision))
+}
