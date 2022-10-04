@@ -5,7 +5,8 @@ import SearchToken from './SearchToken'
 import FavoriteTokens from './FavoriteTokens'
 import TokenList from './TokenList'
 import AppContext from '../../context'
-import { getAnkrBlockchain, getTokenContractAddresses } from '../../utils'
+import { getTokenContractAddresses } from '../../utils'
+import _uniqBy from 'lodash/uniqBy'
 import _debounce from 'lodash/debounce'
 import { TokenI, Token } from '../../types'
 
@@ -25,8 +26,6 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
     const [favoriteTokens, setFavoriteTokens] = useState<Token[]>([])
     const [query, setQuery] = useState('')
 
-    const blockchain = getAnkrBlockchain(selectedChainId)
-
     const mapToken = useCallback((token: TokenI): Token => ({
         id: `${token.name}-${token.symbol}-${token.address}`,
         name: token.name,
@@ -38,18 +37,21 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
     }), [])
 
     const filterMapToken = useCallback((tokens: TokenI[], network: '137' | '10' | '42161'): Token[] => {
-        return tokens
-            .filter(token => token.extensions?.bridgeInfo[network]?.tokenAddress)
-            .map(token => mapToken({
-                ...token,
-                address: token.extensions?.bridgeInfo[network]?.tokenAddress ?? ''
-            }))
+        return _uniqBy(
+            tokens
+                .filter(token => token.extensions?.bridgeInfo[network]?.tokenAddress)
+                .map(token => mapToken({
+                    ...token,
+                    address: token.extensions?.bridgeInfo[network]?.tokenAddress ?? ''
+                })),
+            'id'
+        )
     }, [mapToken])
 
     const tokens: Token[] = useMemo(() => {
         switch (selectedChainId) {
             case 1:
-                return tokenData.map(mapToken)
+                return _uniqBy(tokenData.map(mapToken), 'id')
             case 137:
                 return filterMapToken(tokenData, '137')
             case 10:
@@ -62,7 +64,7 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
     }, [tokenData, selectedChainId, mapToken, filterMapToken])
 
     useEffect(() => {
-        const addresses = getTokenContractAddresses(blockchain)
+        const addresses = getTokenContractAddresses(selectedChainId)
         const favoriteTokens: Token[] = []
         const newTokens = tokens.map(token => {
             if (token.address) {
@@ -90,7 +92,7 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
         setQuery('')
         setStart(0)
         setEnd(20)
-    }, [tokens, blockchain])
+    }, [tokens, selectedChainId])
 
     const [currentTokens, setCurrentTokens] = useState<Token[]>([])
     const [hasMore, setHasMore] = useState(true)
