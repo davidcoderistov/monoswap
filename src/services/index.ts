@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
+import { getAlchemyBaseUrl } from '../utils'
 
 
 interface BridgeTokenI {
@@ -39,30 +40,14 @@ export async function getTokens (): Promise<TokenI[]> {
 const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY
 
 export async function getTokenBalance (chainId: number, ownerAddress: string, tokenAddress: string) {
-    let baseURL = null
-    switch (chainId) {
-        case 1:
-            baseURL = `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
-            break
-        case 5:
-            baseURL = `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`
-            break
-        case 137:
-            baseURL = `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
-            break
-        case 10:
-            baseURL = `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
-            break
-        case 42161:
-            baseURL = `https://arb-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
-            break
-    }
+
+    const baseURL = getAlchemyBaseUrl(chainId)
 
     if (baseURL) {
         try {
             const response = await axios({
                 method: 'post',
-                url: baseURL,
+                url: `${baseURL}${ALCHEMY_API_KEY}`,
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -85,19 +70,19 @@ export async function getTokenBalance (chainId: number, ownerAddress: string, to
                     if (tokenBalance === '0x') {
                         return 0
                     } else {
-                        return parseFloat(
-                            parseFloat(ethers.utils.formatUnits(
-                                ethers.BigNumber.from(tokenBalance),
-                                18,
-                            )).toFixed(6)
-                        )
+                        return parseFloat(ethers.utils.formatUnits(
+                            ethers.BigNumber.from(tokenBalance),
+                            18,
+                        ))
                     }
                 }
             }
             return 0
         } catch (e) {
-            throw e
+            console.error(e)
+            return 0
         }
     }
-    throw new Error('Invalid chain id')
+
+    return 0
 }
