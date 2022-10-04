@@ -23,85 +23,69 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
 
     const scrollRef = useRef(null)
 
-    const [favoriteTokens, setFavoriteTokens] = useState<Token[]>([])
-    const [query, setQuery] = useState('')
-
-    const mapToken = useCallback((token: TokenI): Token => ({
+    const mapToken = useCallback((token: TokenI, addresses: string[]): Token => ({
         id: `${token.name}-${token.symbol}-${token.address}`,
         name: token.name,
         symbol: token.symbol,
         address: token.address,
         decimals: token.decimals,
         thumbnail: token.logoURI,
-        pinned: false,
+        pinned: addresses.some(address => address === token.address),
     }), [])
 
-    const filterMapToken = useCallback((tokens: TokenI[], network: '137' | '10' | '42161'): Token[] => {
+    const filterMapToken = useCallback((tokens: TokenI[], addresses: string[], network: '137' | '10' | '42161'): Token[] => {
         return _uniqBy(
             tokens
                 .filter(token => token.extensions?.bridgeInfo[network]?.tokenAddress)
                 .map(token => mapToken({
                     ...token,
                     address: token.extensions?.bridgeInfo[network]?.tokenAddress ?? ''
-                })),
+                }, addresses)),
             'id'
         )
     }, [mapToken])
 
-    const tokens: Token[] = useMemo(() => {
+    const chainTokens: Token[] = useMemo(() => {
+        const addresses = getTokenContractAddresses(selectedChainId)
         switch (selectedChainId) {
             case 1:
-                return _uniqBy(tokenData.map(mapToken), 'id')
+                return _uniqBy(tokenData.map(token => mapToken(token, addresses)), 'id')
             case 137:
-                return filterMapToken(tokenData, '137')
+                return filterMapToken(tokenData, addresses, '137')
             case 10:
-                return filterMapToken(tokenData, '10')
+                return filterMapToken(tokenData, addresses, '10')
             case 42161:
-                return filterMapToken(tokenData, '42161')
+                return filterMapToken(tokenData, addresses, '42161')
             default:
                 return []
         }
     }, [tokenData, selectedChainId, mapToken, filterMapToken])
 
-    useEffect(() => {
-        const addresses = getTokenContractAddresses(selectedChainId)
-        const favoriteTokens: Token[] = []
-        const newTokens = tokens.map(token => {
-            if (token.address) {
-                const tokenAddress = token.address.toLowerCase()
-                const firstAddress = addresses[0].toLowerCase()
-                const secondAddress = addresses[1].toLowerCase()
-                const thirdAddress = addresses[2].toLowerCase()
-                const fourthAddress = addresses[3].toLowerCase()
-                if (tokenAddress === firstAddress ||
-                    tokenAddress === secondAddress ||
-                    tokenAddress === thirdAddress ||
-                    tokenAddress === fourthAddress) {
-                    const newToken = {
-                        ...token,
-                        pinned: true,
-                    }
-                    favoriteTokens.push(newToken)
-                    return newToken
-                }
-            }
-            return token
-        })
-        setFavoriteTokens(favoriteTokens)
-        setCurrentTokens(Array.from(newTokens).slice(0, 20))
-        setQuery('')
-        setStart(0)
-        setEnd(20)
-    }, [tokens, selectedChainId])
-
-    const [currentTokens, setCurrentTokens] = useState<Token[]>([])
-    const [hasMore, setHasMore] = useState(true)
-    const [start, setStart] = useState(0)
-    const [end, setEnd] = useState(20)
-
+    const [tokens, setTokens] = useState<Token[]>([])
     const [filteredTokens, setFilteredTokens] = useState<Token[]>([])
+    const [query, setQuery] = useState('')
 
-    const filterTokensByQuery = useCallback((query: string) => {
+    const [end, setEnd] = useState(20)
+    const [hasMore, setHasMore] = useState(true)
+
+    useEffect(() => {
+        setTokens(chainTokens)
+        setFilteredTokens(chainTokens)
+        setQuery('')
+        setEnd(20)
+    }, [chainTokens])
+
+    const handleChangeQuery = (query: string) => {
+        setQuery(query)
+        debouncedFilterTokensByQuery(tokens, query)
+    }
+
+    const handleClearQuery = () => {
+        setQuery('')
+        filterTokensByQuery(tokens, '')
+    }
+
+    const filterTokensByQuery = (tokens: Token[], query: string) => {
         const trimmedQuery = query.trim()
         let filteredTokens = Array.from(tokens)
         if (trimmedQuery.length > 0) {
@@ -112,64 +96,44 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
                     token.address.toLowerCase().includes(q)
             })
         }
-        const currentTokens = Array.from(filteredTokens).slice(0, 20)
         setFilteredTokens(filteredTokens)
-        setCurrentTokens(currentTokens)
         // @ts-ignore
         if (scrollRef && scrollRef.current && scrollRef.current.scrollTop) {
             // @ts-ignore
             scrollRef.current.scrollTop = 0
         }
-        setStart(0)
         setEnd(20)
         setHasMore(currentTokens.length < filteredTokens.length)
-    }, [tokens])
+    }
 
-    const debouncedHandleChangeQuery = useMemo(
-        () => _debounce(filterTokensByQuery, 500)
-    , [filterTokensByQuery])
-
-    useEffect(() => {
-        debouncedHandleChangeQuery(query)
-    }, [debouncedHandleChangeQuery, query])
+    const debouncedFilterTokensByQuery = useMemo(
+        () => _debounce(filterTokensByQuery, 500), []
+    )
 
     const handleClickToken = (token: Token) => {
         onTokenSelect(token)
     }
 
-    const handlePinToken = (token: Token) => {
-        const pinned = !token.pinned
-        setCurrentTokens(currentTokens.map(t => {
+    const toggleTokens = (tokens: Token[], token: Token) => {
+        return tokens.map(t => {
             if (t.id === token.id) {
                 return {
                     ...t,
-                    pinned,
+                    pinned: !token.pinned,
                 }
             }
             return t
-        }))
-        if (pinned) {
-            setFavoriteTokens([...favoriteTokens, {...token}])
-        } else {
-            setFavoriteTokens(favoriteTokens.filter(t => t.id !== token.id))
-        }
+        })
+    }
+
+    const handlePinToken = (token: Token) => {
+        setTokens(toggleTokens(tokens, token))
+        setFilteredTokens(toggleTokens(filteredTokens, token))
     }
 
     const handleCloseToken = (token: Token) => {
-        setCurrentTokens(currentTokens.map(t => {
-            if (t.id === token.id) {
-                return {
-                    ...t,
-                    pinned: false,
-                }
-            }
-            return t
-        }))
-        setFavoriteTokens(favoriteTokens.filter(t => t.id !== token.id))
-    }
-
-    const handleClearQuery = () => {
-        setQuery('')
+        setTokens(toggleTokens(tokens, token))
+        setFilteredTokens(toggleTokens(filteredTokens, token))
     }
 
     const onNext = () => {
@@ -177,12 +141,19 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
             setHasMore(false)
             return
         }
+
         setTimeout(() => {
-            setCurrentTokens(currentTokens.concat(Array.from(filteredTokens).slice(start + 20, end + 20)))
-            setStart(start + 20)
             setEnd(end + 20)
         }, 500)
     }
+
+    const favoriteTokens = useMemo(() => {
+        return tokens.filter(token => token.pinned)
+    }, [tokens])
+
+    const currentTokens = useMemo(() => {
+        return Array.from(filteredTokens).slice(0, end)
+    }, [filteredTokens, end])
 
     return (
         <Dialog
@@ -204,7 +175,7 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
                 <SearchTokenModalTitle onClose={onClose} />
                 <SearchToken
                     value={query}
-                    onChange={setQuery}
+                    onChange={handleChangeQuery}
                     onClear={handleClearQuery} />
                 <FavoriteTokens
                     loading={loading}
