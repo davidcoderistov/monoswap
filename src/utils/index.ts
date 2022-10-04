@@ -69,34 +69,6 @@ export function getMainnet (chainId: number): string | null {
     }
 }
 
-export function getAnkrBlockchain (chainId: number): Blockchain {
-    switch (chainId) {
-        case 1:
-        case 3:
-        case 4:
-        case 5:
-        case 42:
-        case 11155111:
-            return 'eth'
-        case 137:
-        case 80001:
-            return 'polygon'
-        case 43114:
-        case 43113:
-            return 'avalanche'
-        case 10:
-        case 420:
-        case 69:
-            return 'optimism'
-        case 42161:
-        case 421611:
-        case 421613:
-            return 'arbitrum'
-        default:
-            return 'eth'
-    }
-}
-
 export function getChainId (network: string): number | null {
     switch (network) {
         case NETWORKS.ETHEREUM.MAINNET:
@@ -252,43 +224,43 @@ export function getChainIdHexValue (chainId: number): string {
     return ethers.utils.hexValue(chainId)
 }
 
-export function getTokenContractAddresses (blockchain: Blockchain) {
-    switch (blockchain) {
-        case 'eth':
+export function getTokenContractAddresses (chainId: number) {
+    switch (chainId) {
+        case 1:
             return [
-                '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT
-                '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48', // USDC
-                '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2', // WETH
-                '0x514910771af9ca656af840dff83e8264ecf986ca', // LINK
+                '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH
+                '0x6B175474E89094C44Da98b954EedeAC495271d0F', // DAI
+                '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+                '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', // WBTC
             ]
-        case 'polygon':
+        case 5:
             return [
-                '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // USDT
-                '0x2791bca1f2de4661ed88a30c99a7a9449aa84174', // USDC
-                '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619', // WETH
-                '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063', // DAI
+                '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', // UNISWAP
+                '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // WETH
             ]
-        case 'avalanche':
+        case 137:
             return [
-                '0xc7198437980c041c805a1edcba50c1ce5db95118', // USDT
-                '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e', // USDC
-                '0x49d5c2bdffac6ce2bfdb6640f4f80f226bc10bab', // WETH
-                '0xd586e7f844cea2f87f50152665bcbc2c279d8d70', // DAI
+                '0x9c2C5fd7b07E95EE044DDeba0E97a665F142394f', // 1INCH
+                '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', // DAI
+                '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC
+                '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6', // WBTC
             ]
-        case 'optimism':
+        case 10:
             return [
-                '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
-                '0x4200000000000000000000000000000000000042', // OPTIMISM
-                '0x4200000000000000000000000000000000000006', // WETH
-                '0x8700daec35af8ff88c16bdf0418774cb3d7599b4', // Synthetix
+                '0x68f180fcCe6836688e9084f035309E29Bf0A2095', // WBTC
+                '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
+                '0x7F5c764cBc14f9669B88837ca1490cCa17c31607', // USDC
+                '0xab7bAdEF82E9Fe11f6f33f87BC9bC2AA27F2fCB5', // MKR
             ]
-        case 'arbitrum':
+        case 42161:
             return [
-                '0x05e481b19129b560e921e487adb281e70bdba463', // USDT
-                '0x3405a1bd46b85c5c029483fbecf2f3e611026e45', // USDC
-                '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1', // DAI
-                '0x354a6da3fcde098f8389cad84b0182725c6c91de', // COMPOUND
+                '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1', // WETH
+                '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1', // DAI
+                '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8', // USDC
+                '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f', // WBTC
             ]
+        default:
+            return []
     }
 }
 
