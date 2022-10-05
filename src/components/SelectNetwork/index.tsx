@@ -1,23 +1,13 @@
 import React, { useState } from 'react'
-import { Box, Typography, styled } from '@mui/material'
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
+import { Box, Typography } from '@mui/material'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import NetworkOption from './NetworkOption'
 import Image from '../Image'
+import Tooltip from '../Tooltip'
 import { IMAGES } from '../../config'
 
 
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} />
-))(() => ({
-    [`& .${tooltipClasses.tooltip}`]: {
-        backgroundColor: '#191B1F',
-        color: '#FFFFFF',
-        borderRadius: '15px',
-        minWidth: 240,
-        padding: '12px',
-    },
-}))
+
 
 export interface SelectNetworkProps {
     selectedNetwork: string
@@ -43,7 +33,7 @@ export default function SelectNetwork ({ selectedNetwork, selectedImgSrc, onChan
     }
 
     return (
-        <HtmlTooltip
+        <Tooltip
             title={
                 <React.Fragment>
                     <Typography color='gainsboro' margin='5px'>
@@ -98,6 +88,6 @@ export default function SelectNetwork ({ selectedNetwork, selectedImgSrc, onChan
                     </Box>
                 </Box>
             </Box>
-        </HtmlTooltip>
+        </Tooltip>
     )
 }
