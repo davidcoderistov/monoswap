@@ -5,7 +5,7 @@ import Token, { TokenProps } from '../Token'
 
 export type TokenInputProps = {
     value: string
-    onChange: (value: string) => void
+    onChange?: (value: string) => void
     balance?: string
 } & TokenProps
 
@@ -13,7 +13,9 @@ export type TokenInputProps = {
 export default function TokenInput ({ value, onChange, balance, type, symbol, imgSrc, onClick }: TokenInputProps) {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(event.target.value)
+        if (onChange) {
+            onChange(event.target.value)
+        }
     }, [onChange])
 
     const isSelect = type === 'select'
