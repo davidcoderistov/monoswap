@@ -5,7 +5,7 @@ import { ArrowDownward as MUIArrowDownward } from '@mui/icons-material'
 
 export interface ArrowDownwardProps {
     active: boolean
-    onClick: () => void
+    onClick?: () => void
 }
 
 export default function ArrowDownward (props: ArrowDownwardProps) {
