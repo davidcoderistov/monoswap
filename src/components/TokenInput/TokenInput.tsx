@@ -40,7 +40,7 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                 flexDirection='row'
                 alignItems='center'
                 columnGap='10px'
-                >
+            >
                 <Box
                     flex='1 1 auto'
                 >
