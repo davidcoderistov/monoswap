@@ -17,14 +17,14 @@ export default function ViewSwapTokens (props: ViewSwapTokensProps) {
     return (
         <React.Fragment>
             <TokenInput
-                value={props.fromValue}
                 type='view'
+                value={props.fromValue}
                 symbol={props.fromSymbol}
-                imgSrc={props.toSymbol} />
+                imgSrc={props.fromImgSrc} />
             <ArrowDownward active={false} />
             <TokenInput
-                value={props.toValue}
                 type='view'
+                value={props.toValue}
                 symbol={props.toSymbol}
                 imgSrc={props.toImgSrc} />
         </React.Fragment>
