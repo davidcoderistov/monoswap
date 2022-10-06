@@ -6,7 +6,7 @@ import { KeyboardArrowDown, Close } from '@mui/icons-material'
 
 export interface TokenProps {
     type: 'button' | 'select' | 'close' | 'view'
-    onClick: () => void
+    onClick?: () => void
     symbol?: string | null
     imgSrc?: string | null
     onClose?: () => void
