@@ -5,7 +5,7 @@ import { KeyboardArrowDown, Close } from '@mui/icons-material'
 
 
 export interface TokenProps {
-    type: 'button' | 'select' | 'close'
+    type: 'button' | 'select' | 'close' | 'view'
     onClick: () => void
     symbol?: string | null
     imgSrc?: string | null
@@ -24,6 +24,7 @@ export default function Token ({ type, symbol, imgSrc, onClick, onClose }: Token
     const isButton = type === 'button'
     const isSelect = type === 'select'
     const isClose = type === 'close'
+    const isView = type === 'view'
 
     return (
         <Box
@@ -35,16 +36,18 @@ export default function Token ({ type, symbol, imgSrc, onClick, onClose }: Token
             paddingY={isClose ? '7px' : '8px'}
             paddingRight={isClose ? '7px' : '8px'}
             paddingLeft={isSelect ? '8px' : isButton ? '12px' : '7px'}
-            borderRadius='18px'
-            bgcolor={ isSelect ? '#2C2F36' : isButton ? '#2172E5' : '#191B1F'}
+            borderRadius={isView ? undefined : '18px'}
+            bgcolor={isView ? undefined : isSelect ? '#2C2F36' : isButton ? '#2172E5' : '#191B1F'}
             sx={{
-                cursor: 'pointer',
-                '&:hover': { backgroundColor: isSelect ? '#40444F' : isButton ? '#1966D4' : '#2C2F36' },
-                ...isClose && { border: '1px solid #40444F' }
+                ...!isView && {
+                    cursor: 'pointer',
+                    '&:hover': { backgroundColor: isSelect ? '#40444F' : isButton ? '#1966D4' : '#2C2F36' },
+                    ...isClose && { border: '1px solid #40444F' }
+                }
             }}
             onClick={onClick}
         >
-            { (isSelect || isClose) && imgSrc && (
+            { (isSelect || isClose || isView) && imgSrc && (
                 <Image
                     src={imgSrc}
                     alt='Token Logo'
@@ -64,7 +67,7 @@ export default function Token ({ type, symbol, imgSrc, onClick, onClose }: Token
                 >
                     { isButton ? 'Select token' : symbol }
                 </Typography>
-                { isClose ? (
+                { isView ? null : isClose ? (
                     <Box
                         component='div'
                         display='flex'
