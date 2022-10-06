@@ -16,13 +16,16 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
         onChange(event.target.value)
     }, [onChange])
 
+    const isSelect = type === 'select'
+    const isView = type === 'view'
+
     return (
         <Box
             component='div'
             display='flex'
             flexDirection='column'
             paddingX='16px'
-            paddingTop='16px'
+            paddingTop={isView ? '8px': '16px'}
             paddingBottom='8px'
             bgcolor='#212429'
             borderRadius='20px'
@@ -52,6 +55,7 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                         }}
                         value={value}
                         onChange={handleChange}
+                        readOnly={isView}
                         type='number'
                         placeholder='0.0'
                         fullWidth
@@ -64,7 +68,7 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                     onClick={onClick}
                 />
             </Box>
-            { type === 'select' && (
+            { isSelect && (
                 <Box
                     component='div'
                     display='flex'
