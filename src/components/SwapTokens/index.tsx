@@ -7,6 +7,7 @@ interface SwapTokensProps {
     fromType: 'button' | 'select'
     fromValue: string
     onFromChange: (fromValue: string) => void
+    fromDisabled: boolean
     fromBalance?: string
     fromSymbol?: string
     fromImgSrc?: string
@@ -14,6 +15,7 @@ interface SwapTokensProps {
     toType: 'button' | 'select'
     toValue: string
     onToChange: (fromValue: string) => void
+    toDisabled: boolean
     toBalance?: string
     toSymbol?: string
     toImgSrc?: string
@@ -29,6 +31,7 @@ export default function SwapTokens (props: SwapTokensProps) {
                 type={props.fromType}
                 value={props.fromValue}
                 onChange={props.onFromChange}
+                disabled={props.fromDisabled}
                 symbol={props.fromSymbol}
                 imgSrc={props.fromImgSrc}
                 balance={props.fromBalance}
@@ -40,6 +43,7 @@ export default function SwapTokens (props: SwapTokensProps) {
                 type={props.toType}
                 value={props.toValue}
                 onChange={props.onToChange}
+                disabled={props.toDisabled}
                 symbol={props.toSymbol}
                 imgSrc={props.toImgSrc}
                 balance={props.toBalance}
