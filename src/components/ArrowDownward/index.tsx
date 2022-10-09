@@ -10,6 +10,12 @@ export interface ArrowDownwardProps {
 
 export default function ArrowDownward (props: ArrowDownwardProps) {
 
+    const handleClick = () => {
+        if (props.active && props.onClick) {
+            props.onClick()
+        }
+    }
+
     return (
         <Box
             component='div'
@@ -27,7 +33,7 @@ export default function ArrowDownward (props: ArrowDownwardProps) {
             border='4px solid #191B1F'
             borderRadius='50%'
             zIndex='2'
-            onClick={props.onClick}
+            onClick={handleClick}
             sx={{ cursor: props.active ? 'pointer': 'default' }}
         >
             <MUIArrowDownward sx={{
