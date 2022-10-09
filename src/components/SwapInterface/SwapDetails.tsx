@@ -2,50 +2,17 @@ import React, { useState } from 'react'
 import { Box, CircularProgress, Typography, Collapse } from '@mui/material'
 import { InfoOutlined, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
 import Tooltip from '../Tooltip'
+import SwapDetailsView from '../SwapDetails'
 
-
-const SwapDetailsRow = (props: { title: string, subtitle: string, secondary?: boolean }) => (
-    <Box
-        display='flex'
-        flexDirection='row'
-        justifyContent='space-between'
-        alignItems='center'
-        color={props.secondary ? '#848B9F': '#FFFFFF'}
-    >
-        <Typography fontSize={14}>
-            { props.title }
-        </Typography>
-        <Typography fontSize={14} textAlign='end'>
-            { props.subtitle }
-        </Typography>
-    </Box>
-)
-
-const SwapDetailsView = () => (
-    <React.Fragment>
-        <SwapDetailsRow
-            title='Expected Output'
-            subtitle='16127.4 DAI' />
-        <SwapDetailsRow
-            title='Slippage'
-            subtitle='2.00%' />
-        <Box borderTop='1px solid #40444F' marginTop='5px' />
-        <SwapDetailsRow
-            title='Minimum received after slippage'
-            subtitle='15813.1 DAI'
-            secondary />
-        <SwapDetailsRow
-            title='Network Fee'
-            subtitle='~$2.04'
-            secondary />
-    </React.Fragment>
-)
 
 export interface SwapDetailsProps {
     loading: boolean
+    expected: string
+    slippage: string
+    minimum: string
 }
 
-export default function SwapDetails ({ loading }: SwapDetailsProps) {
+export default function SwapDetails ({ loading, expected, slippage, minimum }: SwapDetailsProps) {
 
     const [expanded, setExpanded] = useState(false)
 
@@ -101,7 +68,10 @@ export default function SwapDetails ({ loading }: SwapDetailsProps) {
                         <React.Fragment>
                             <Tooltip
                                 title={
-                                    <SwapDetailsView />
+                                    <SwapDetailsView
+                                        expected={expected}
+                                        slippage={slippage}
+                                        minimum={minimum} />
                                 }
                                 placement='bottom'
                                 enterDelay={0}
@@ -145,7 +115,10 @@ export default function SwapDetails ({ loading }: SwapDetailsProps) {
                     padding='15px'
                     marginTop='10px'
                 >
-                    <SwapDetailsView />
+                    <SwapDetailsView
+                        expected={expected}
+                        slippage={slippage}
+                        minimum={minimum} />
                 </Box>
             </Collapse>
         </React.Fragment>
