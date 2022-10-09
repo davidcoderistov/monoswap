@@ -28,7 +28,7 @@ export default function ArrowDownward (props: ArrowDownwardProps) {
             borderRadius='50%'
             zIndex='2'
             onClick={props.onClick}
-            sx={{ cursor: 'pointer' }}
+            sx={{ cursor: props.active ? 'pointer': 'default' }}
         >
             <MUIArrowDownward sx={{
                 fontSize: '18px',
