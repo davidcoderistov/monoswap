@@ -7,10 +7,11 @@ export type TokenInputProps = {
     value: string
     onChange?: (value: string) => void
     balance?: string
+    disabled?: boolean
 } & TokenProps
 
 
-export default function TokenInput ({ value, onChange, balance, type, symbol, imgSrc, onClick }: TokenInputProps) {
+export default function TokenInput ({ value, onChange, balance, disabled, type, symbol, imgSrc, onClick }: TokenInputProps) {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         if (onChange) {
@@ -53,6 +54,10 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                                 MozAppearance: 'textfield'
                             },
                             color: '#FFFFFF',
+                            '&.MuiInputBase-root.Mui-disabled': {
+                                color: 'red' // (default alpha is 0.38)
+                            },
+                            '&.Mui-disabled': { '.MuiInputBase-input': { 'WebkitTextFillColor': '#7A7C7F' } },
                             font: '32px monospace'
                         }}
                         value={value}
@@ -60,6 +65,7 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                         readOnly={isView}
                         type='number'
                         placeholder='0.0'
+                        disabled={disabled}
                         fullWidth
                     />
                 </Box>
@@ -82,7 +88,7 @@ export default function TokenInput ({ value, onChange, balance, type, symbol, im
                     { balance && (
                         <Typography
                             color='#8F96AC'
-                            sx={{ font: '16px monospace', cursor: 'pointer' }}
+                            sx={{ font: '16px monospace' }}
                         >
                             Balance: { balance }
                         </Typography>
