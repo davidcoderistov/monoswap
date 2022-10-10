@@ -43,7 +43,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const [toToken, setToToken] = useState<Token | null>(null)
     const [fromBalance, setFromBalance, trySetFromBalance] = useBalance()
     const [toBalance, setToBalance, trySetToBalance] = useBalance()
-    const [swapInfo, swapDetails, tryFetchSwapDetails] = useSwapDetails()
+    const [swapInfo, swapDetails, tryFetchSwapDetails, tryFetchSwapDetailsDebounced] = useSwapDetails()
     const [currToken, setCurrToken] = useState<'from' | 'to'>('from')
 
     const handleSelectToken = (token: Token) => {
@@ -76,7 +76,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             setToInputValue('')
         } else {
             if (fromToken && toToken) {
-                tryFetchSwapDetails({
+                tryFetchSwapDetailsDebounced({
                     chainId: selectedChainId,
                     sellTokenAddress: fromToken.address,
                     sellTokenDecimals: fromToken.decimals,
@@ -98,7 +98,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             setFromInputValue('')
         } else {
             if (fromToken && toToken) {
-                tryFetchSwapDetails({
+                tryFetchSwapDetailsDebounced({
                     chainId: selectedChainId,
                     sellTokenAddress: fromToken.address,
                     sellTokenDecimals: fromToken.decimals,
