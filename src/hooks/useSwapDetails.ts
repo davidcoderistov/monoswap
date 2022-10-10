@@ -14,20 +14,21 @@ export function useSwapDetails () {
     const [minimumReceived, setMinimumReceived] = useState('')
     const [insufficientLiquidity, setInsufficientLiquidity] = useState(false)
 
-    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: () => void }) => {
+    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: (expectedOutput: string) => void }) => {
         if (swapDetailsArgs.sellAmount.trim().length > 0 && parseFloat(swapDetailsArgs.sellAmount) > 0) {
             setSwapDetailsOpen(true)
             setSwapDetailsLoading(true)
             setInsufficientLiquidity(false)
             try {
                 const swapDetails = await getSwapDetails(swapDetailsArgs)
+                const expectedOutput = roundTo(swapDetails.expectedOutput, 6).toString()
                 setPrice(roundTo(swapDetails.price, 6).toString())
-                setExpectedOutput(roundTo(swapDetails.expectedOutput, 6).toString())
+                setExpectedOutput(expectedOutput)
                 setSlippage(`${swapDetails.slippage}.00`)
                 setMinimumReceived(roundTo(swapDetails.minimumReceived, 6).toString())
                 setSwapDetailsLoading(false)
                 if (swapDetailsArgs.onSuccess) {
-                    swapDetailsArgs.onSuccess()
+                    swapDetailsArgs.onSuccess(expectedOutput)
                 }
             } catch (e) {
                 console.error(e)
