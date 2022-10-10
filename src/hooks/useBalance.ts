@@ -1,4 +1,4 @@
-import {useState, useContext, useCallback} from 'react'
+import { useState, useContext, useCallback } from 'react'
 import AppContext from '../context'
 import { getTokenBalance } from '../services'
 
@@ -26,5 +26,5 @@ export function useBalance () {
         }
     }
 
-    return [balance, trySetBalance] as const
+    return [balance, setBalance, trySetBalance] as const
 }
