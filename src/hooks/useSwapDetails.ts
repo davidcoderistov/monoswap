@@ -55,5 +55,5 @@ export function useSwapDetails () {
         minimumReceived,
     }
 
-    return [swapInfo, swapDetails, tryFetchSwapDetailsDebounced] as const
+    return [swapInfo, swapDetails, tryFetchSwapDetails, tryFetchSwapDetailsDebounced] as const
 }
