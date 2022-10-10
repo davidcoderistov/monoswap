@@ -1,5 +1,6 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useContext } from 'react'
 import { useBalance } from '../../hooks/useBalance'
+import { useSwapDetails } from '../../hooks/useSwapDetails'
 import { Box, Typography } from '@mui/material'
 import SwapTokens from '../SwapTokens'
 import ActionButton from './ActionButton'
@@ -7,7 +8,6 @@ import SelectTokenModal from '../SelectTokenModal'
 import SwapDetails from './SwapDetails'
 import { Token } from '../../types'
 import AppContext from '../../context'
-import _debounce from 'lodash/debounce'
 
 
 export interface SwapInterfaceProps {
@@ -19,6 +19,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const {
         connectedTo,
         selectedAccount,
+        selectedChainId,
     } = useContext(AppContext)
 
     const [selectTokenOpen, setSelectTokenOpen] = useState(false)
@@ -42,6 +43,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const [toToken, setToToken] = useState<Token | null>(null)
     const [fromBalance, setFromBalance, trySetFromBalance] = useBalance()
     const [toBalance, setToBalance, trySetToBalance] = useBalance()
+    const [swapInfo, swapDetails, tryFetchSwapDetails] = useSwapDetails()
 
     const handleSelectToken = (token: Token) => {
         if (type === 'from') {
@@ -71,7 +73,19 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         if (selectState) {
             setToInputValue('')
         } else {
-            // TODO: Fetch price debounced
+            if (fromToken && toToken) {
+                tryFetchSwapDetails({
+                    chainId: selectedChainId,
+                    sellTokenAddress: fromToken.address,
+                    sellTokenDecimals: fromToken.decimals,
+                    buyTokenAddress: toToken.address,
+                    buyTokenDecimals: toToken.decimals,
+                    sellAmount: inputValue,
+                    onSuccess: (expectedOutput) => {
+                        setToInputValue(expectedOutput)
+                    }
+                })
+            }
         }
     }
 
@@ -80,7 +94,19 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         if (selectState) {
             setFromInputValue('')
         } else {
-            // TODO: Fetch price debounced
+            if (fromToken && toToken) {
+                tryFetchSwapDetails({
+                    chainId: selectedChainId,
+                    sellTokenAddress: fromToken.address,
+                    sellTokenDecimals: fromToken.decimals,
+                    buyTokenAddress: toToken.address,
+                    buyTokenDecimals: toToken.decimals,
+                    sellAmount: inputValue,
+                    onSuccess: (expectedOutput) => {
+                        setFromInputValue(expectedOutput)
+                    }
+                })
+            }
         }
     }
 
@@ -103,11 +129,14 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const selectState = !Boolean(fromToken) || !Boolean(toToken)
     const enterState = (!Boolean(fromInputValue) || !parseFloat(fromInputValue)) && (!Boolean(toInputValue) || !parseFloat(toInputValue))
     const swapState = !Boolean(selectState) && !Boolean(enterState)
+    const insufficientBalance = !fromBalance || parseFloat(fromInputValue) > parseFloat(fromBalance)
 
     const btnType = !isConnected || (isConnected && swapState && allowance) ? 'actionable' : 'disabled'
     const btnName = isConnected ?
         selectState ? 'Select a token' :
-            enterState ? 'Enter an amount' : 'Swap' : 'Connect Wallet'
+            enterState ? 'Enter an amount' : swapInfo.insufficientLiquidity ?
+                'Insufficient liquidity for this trade': insufficientBalance ?
+                    `Insufficient ${fromToken?.symbol} balance` : 'Swap' : 'Connect Wallet'
 
     return (
         <Box
@@ -146,11 +175,16 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 onToClick={handleOpenToSelectTokenModal}
                 switchActive={Boolean(fromToken) && Boolean(toToken)}
                 onSwitchClick={handleSwapTokens} />
-            <SwapDetails
-                loading={false}
-                expected='0.00262297'
-                slippage='2.00'
-                minimum='0.00257154' />
+            { swapInfo.swapDetailsOpen && (
+                <SwapDetails
+                    loading={swapInfo.swapDetailsLoading}
+                    fromSymbol={fromToken?.symbol ?? ''}
+                    toSymbol={toToken?.symbol ?? ''}
+                    price={swapDetails.price}
+                    expected={swapDetails.expectedOutput}
+                    slippage={swapDetails.slippage}
+                    minimum={swapDetails.minimumReceived} />
+            )}
             { swapState && !allowance && (
                 <ActionButton
                     type='actionable'
