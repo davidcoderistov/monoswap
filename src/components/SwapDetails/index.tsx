@@ -20,6 +20,7 @@ const SwapDetailsRow = (props: { title: string, subtitle: string, secondary?: bo
 )
 
 interface CustomProps {
+    symbol: string
     expected: string
     slippage: string
     minimum: string
@@ -27,20 +28,20 @@ interface CustomProps {
 
 export type SwapDetailsProps = CustomProps & BoxProps
 
-export default function SwapDetails ({ expected, slippage, minimum, ...rest }: SwapDetailsProps) {
+export default function SwapDetails ({ symbol, expected, slippage, minimum, ...rest }: SwapDetailsProps) {
 
     return (
         <Box {...rest}>
             <SwapDetailsRow
                 title='Expected Output'
-                subtitle={`${expected} DAI`} />
+                subtitle={`${expected} ${symbol}`} />
             <SwapDetailsRow
                 title='Slippage'
                 subtitle={`${slippage}%`} />
             <Box borderTop='1px solid #40444F' marginTop='5px' />
             <SwapDetailsRow
                 title='Minimum received after slippage'
-                subtitle={`${minimum} DAI`}
+                subtitle={`${minimum} ${symbol}`}
                 secondary />
         </Box>
     )
