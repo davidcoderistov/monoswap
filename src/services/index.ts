@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { getAlchemyBaseUrl, get0xBaseUrl } from '../utils'
 import { ethers } from 'ethers'
-import { getAlchemyBaseUrl } from '../utils'
+import qs from 'qs'
 
 
 interface BridgeTokenI {
@@ -85,4 +86,57 @@ export async function getTokenBalance (chainId: number, ownerAddress: string, to
     }
 
     return 0
+}
+
+interface SwapDetailsArgs {
+    chainId: number
+    sellTokenAddress: string
+    sellTokenDecimals: number
+    buyTokenAddress: string
+    buyTokenDecimals: number
+    sellAmount: string
+    takerAddress: string
+}
+
+interface SwapDetailsReturnType {
+    price: number
+    expectedOutput: number
+    slippage: number
+    minimumReceived: number
+}
+
+export async function getSwapDetails (swapDetails: SwapDetailsArgs): Promise<SwapDetailsReturnType> {
+    const baseUrl = get0xBaseUrl(swapDetails.chainId)
+    if (baseUrl) {
+        try {
+            const params = {
+                sellToken: swapDetails.sellTokenAddress,
+                buyToken: swapDetails.buyTokenAddress,
+                sellAmount: ethers.utils.parseUnits(swapDetails.sellAmount, swapDetails.sellTokenDecimals).toString(),
+                takerAddress: swapDetails.takerAddress,
+            }
+            const response = await fetch(
+                `${baseUrl}swap/v1/price?${qs.stringify(params)}`
+            )
+            const details = await response.json()
+
+            const buyAmount = parseFloat(
+                ethers.utils.formatUnits(
+                    ethers.BigNumber.from(details.buyAmount),
+                    swapDetails.buyTokenDecimals,
+                )
+            )
+
+            return {
+                price: parseFloat(details.price),
+                expectedOutput: details.expectedSlippage ? (1 + parseFloat(details.expectedSlippage)) * buyAmount : buyAmount,
+                slippage: 1,
+                minimumReceived: buyAmount * 0.99,
+            }
+        } catch (e) {
+            throw e
+        }
+    } else {
+        throw new Error('Chain id is not valid')
+    }
 }
