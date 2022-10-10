@@ -51,6 +51,7 @@ export default function SwapDetailsModal () {
                     bgcolor='#212429'
                     borderRadius='20px'
                     padding='15px'
+                    symbol='DAI'
                     expected='0.00262297'
                     slippage='2.00'
                     minimum='0.00257154' />
