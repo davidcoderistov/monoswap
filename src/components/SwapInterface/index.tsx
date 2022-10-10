@@ -176,7 +176,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 toImgSrc={toToken?.thumbnail}
                 toBalance={toBalance}
                 onToClick={handleOpenToSelectTokenModal}
-                switchActive={Boolean(fromToken) && Boolean(toToken)}
+                switchActive={Boolean(fromToken) && Boolean(toToken) && !swapInfo.swapDetailsLoading}
                 onSwitchClick={handleSwapTokens} />
             { swapInfo.swapDetailsOpen && (
                 <SwapDetails
