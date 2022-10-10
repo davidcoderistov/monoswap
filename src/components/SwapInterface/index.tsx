@@ -40,8 +40,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
 
     const [fromToken, setFromToken] = useState<Token | null>(null)
     const [toToken, setToToken] = useState<Token | null>(null)
-    const [fromBalance, trySetFromBalance] = useBalance()
-    const [toBalance, trySetToBalance] = useBalance()
+    const [fromBalance, setFromBalance, trySetFromBalance] = useBalance()
+    const [toBalance, setToBalance, trySetToBalance] = useBalance()
 
     const handleSelectToken = (token: Token) => {
         if (type === 'from') {
@@ -59,6 +59,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setToToken(fromToken ?? null)
         setFromInputValue(toInputValue)
         setToInputValue(fromInputValue)
+        setFromBalance(toBalance)
+        setToBalance(fromBalance)
     }
 
     const [fromInputValue, setFromInputValue] = useState('')
