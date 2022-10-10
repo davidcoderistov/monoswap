@@ -320,6 +320,23 @@ export function getAlchemyBaseUrl (chainId: number) {
     }
 }
 
+export function get0xBaseUrl (chainId: number) {
+    switch (chainId) {
+        case 1:
+            return 'https://api.0x.org/'
+        case 5:
+            return 'https://goerli.api.0x.org/'
+        case 137:
+            return 'https://polygon.api.0x.org/'
+        case 10:
+            return 'https://optimism.api.0x.org/'
+        case 42161:
+            return 'https://arbitrum.api.0x.org/'
+        default:
+            return null
+    }
+}
+
 export function roundTo (number: number, precision: number) {
     return parseFloat(number.toFixed(precision))
 }
