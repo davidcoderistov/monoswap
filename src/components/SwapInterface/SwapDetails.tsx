@@ -7,12 +7,15 @@ import SwapDetailsView from '../SwapDetails'
 
 export interface SwapDetailsProps {
     loading: boolean
+    fromSymbol: string
+    toSymbol: string
+    price: string
     expected: string
     slippage: string
     minimum: string
 }
 
-export default function SwapDetails ({ loading, expected, slippage, minimum }: SwapDetailsProps) {
+export default function SwapDetails ({ loading, fromSymbol, toSymbol, price, expected, slippage, minimum }: SwapDetailsProps) {
 
     const [expanded, setExpanded] = useState(false)
 
@@ -69,6 +72,7 @@ export default function SwapDetails ({ loading, expected, slippage, minimum }: S
                             <Tooltip
                                 title={
                                     <SwapDetailsView
+                                        symbol={toSymbol}
                                         expected={expected}
                                         slippage={slippage}
                                         minimum={minimum} />
@@ -88,7 +92,7 @@ export default function SwapDetails ({ loading, expected, slippage, minimum }: S
                                 />
                             </Tooltip>
                             <Typography color='#FFFFFF' fontSize='14px'>
-                                1 DAI = 0.06321 ETH
+                                1 {fromSymbol} = {price} {toSymbol}
                             </Typography>
                         </React.Fragment>
                     )}
@@ -116,6 +120,7 @@ export default function SwapDetails ({ loading, expected, slippage, minimum }: S
                     marginTop='10px'
                 >
                     <SwapDetailsView
+                        symbol={toSymbol}
                         expected={expected}
                         slippage={slippage}
                         minimum={minimum} />
