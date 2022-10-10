@@ -88,14 +88,13 @@ export async function getTokenBalance (chainId: number, ownerAddress: string, to
     return 0
 }
 
-interface SwapDetailsArgs {
+export interface SwapDetailsArgs {
     chainId: number
     sellTokenAddress: string
     sellTokenDecimals: number
     buyTokenAddress: string
     buyTokenDecimals: number
     sellAmount: string
-    takerAddress: string
 }
 
 interface SwapDetailsReturnType {
@@ -113,7 +112,6 @@ export async function getSwapDetails (swapDetails: SwapDetailsArgs): Promise<Swa
                 sellToken: swapDetails.sellTokenAddress,
                 buyToken: swapDetails.buyTokenAddress,
                 sellAmount: ethers.utils.parseUnits(swapDetails.sellAmount, swapDetails.sellTokenDecimals).toString(),
-                takerAddress: swapDetails.takerAddress,
             }
             const response = await fetch(
                 `${baseUrl}swap/v1/price?${qs.stringify(params)}`
