@@ -44,6 +44,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const [fromBalance, setFromBalance, trySetFromBalance] = useBalance()
     const [toBalance, setToBalance, trySetToBalance] = useBalance()
     const [swapInfo, swapDetails, tryFetchSwapDetails] = useSwapDetails()
+    const [currToken, setCurrToken] = useState<'from' | 'to'>('from')
 
     const handleSelectToken = (token: Token) => {
         if (type === 'from') {
@@ -70,6 +71,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
 
     const handleFromInputValueChange = async (inputValue: string) => {
         setFromInputValue(inputValue)
+        setCurrToken('to')
         if (selectState) {
             setToInputValue('')
         } else {
@@ -91,6 +93,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
 
     const handleToInputValueChange = async (inputValue: string) => {
         setToInputValue(inputValue)
+        setCurrToken('from')
         if (selectState) {
             setFromInputValue('')
         } else {
@@ -160,7 +163,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 fromType={fromToken ? 'select' : 'button'}
                 fromValue={fromInputValue}
                 onFromChange={handleFromInputValueChange}
-                fromDisabled={false}
+                fromDisabled={currToken === 'from' && swapInfo.swapDetailsLoading}
                 fromSymbol={fromToken?.symbol}
                 fromImgSrc={fromToken?.thumbnail}
                 fromBalance={fromBalance}
@@ -168,7 +171,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 toType={toToken ? 'select' : 'button'}
                 toValue={toInputValue}
                 onToChange={handleToInputValueChange}
-                toDisabled={false}
+                toDisabled={currToken === 'to' && swapInfo.swapDetailsLoading}
                 toSymbol={toToken?.symbol}
                 toImgSrc={toToken?.thumbnail}
                 toBalance={toBalance}
