@@ -50,6 +50,36 @@ export default function SelectTokenModal ({ open, onClose, onTokenSelect }: Sele
         switch (selectedChainId) {
             case 1:
                 return _uniqBy(tokenData.map(token => mapToken(token, addresses)), 'id')
+            case 5:
+                return _uniqBy(tokenData
+                    .filter(token => {
+                        const address = token.address.toLowerCase()
+                        return address === '0x514910771AF9Ca656af840dff83E8264EcF986CA'.toLowerCase() || // LINK
+                            address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase() || // WETH
+                            address === '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'.toLowerCase() // USDC
+                    })
+                    .map(token => {
+                        const address = token.address.toLowerCase()
+                        if (address === '0x514910771AF9Ca656af840dff83E8264EcF986CA'.toLowerCase()) {
+                            return {
+                                ...token,
+                                address: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB', // LINK Goerli
+                            }
+                        } else if (address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'.toLowerCase()) {
+                            return {
+                                ...token,
+                                address: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // WETH Goerli
+                            }
+                        } else if (address === '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'.toLowerCase()) {
+                            return {
+                                ...token,
+                                address: '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', // USDC Goerli
+                            }
+                        } else {
+                            return token
+                        }
+                    })
+                    .map(token => mapToken(token, addresses)), 'id')
             case 137:
                 return filterMapToken(tokenData, addresses, '137')
             case 10:

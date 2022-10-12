@@ -235,8 +235,9 @@ export function getTokenContractAddresses (chainId: number) {
             ]
         case 5:
             return [
-                '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', // UNISWAP
+                '0x326C977E6efc84E512bB9C30f76E30c160eD06FB', // LINK
                 '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6', // WETH
+                '0x2f3A40A3db8a7e3D09B0adfEfbCe4f6F81927557', // USDC
             ]
         case 137:
             return [
