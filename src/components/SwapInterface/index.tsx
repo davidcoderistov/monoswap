@@ -83,8 +83,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     buyTokenAddress: toToken.address,
                     buyTokenDecimals: toToken.decimals,
                     sellAmount: inputValue,
-                    onSuccess: (expectedOutput) => {
-                        setToInputValue(expectedOutput)
+                    onSuccess: ({ buyAmount }) => {
+                        setToInputValue(buyAmount)
                     }
                 })
             }
@@ -100,14 +100,15 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             if (fromToken && toToken) {
                 tryFetchSwapDetailsDebounced({
                     chainId: selectedChainId,
-                    sellTokenAddress: fromToken.address,
-                    sellTokenDecimals: fromToken.decimals,
-                    buyTokenAddress: toToken.address,
-                    buyTokenDecimals: toToken.decimals,
+                    sellTokenAddress: toToken.address,
+                    sellTokenDecimals: toToken.decimals,
+                    buyTokenAddress: fromToken.address,
+                    buyTokenDecimals: fromToken.decimals,
                     sellAmount: inputValue,
-                    onSuccess: (expectedOutput) => {
-                        setFromInputValue(expectedOutput)
-                    }
+                    onSuccess: ({ buyAmount }) => {
+                        setFromInputValue(buyAmount)
+                    },
+                    reverse: true,
                 })
             }
         }
