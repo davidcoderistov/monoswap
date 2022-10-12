@@ -98,13 +98,14 @@ export interface SwapDetailsArgs {
 }
 
 interface SwapDetailsReturnType {
+    buyAmount: number
     price: number
     expectedOutput: number
     slippage: number
     minimumReceived: number
 }
 
-export async function getSwapDetails (swapDetails: SwapDetailsArgs): Promise<SwapDetailsReturnType> {
+export async function getSwapDetails (swapDetails: SwapDetailsArgs, reverse = false): Promise<SwapDetailsReturnType> {
     const baseUrl = get0xBaseUrl(swapDetails.chainId)
     if (baseUrl) {
         try {
@@ -124,12 +125,15 @@ export async function getSwapDetails (swapDetails: SwapDetailsArgs): Promise<Swa
                     swapDetails.buyTokenDecimals,
                 )
             )
+            const buyUnits = reverse ? parseFloat(swapDetails.sellAmount) : buyAmount
+            const price = parseFloat(details.price)
 
             return {
-                price: parseFloat(details.price),
-                expectedOutput: details.expectedSlippage ? (1 + parseFloat(details.expectedSlippage)) * buyAmount : buyAmount,
+                buyAmount,
+                price: reverse ? (1.00 / price) : price,
+                expectedOutput: details.expectedSlippage ? (1 + parseFloat(details.expectedSlippage)) * buyUnits : buyUnits,
                 slippage: 1,
-                minimumReceived: buyAmount * 0.99,
+                minimumReceived: buyUnits * 0.99,
             }
         } catch (e) {
             throw e

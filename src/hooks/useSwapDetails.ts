@@ -4,6 +4,14 @@ import { roundTo } from '../utils'
 import _debounce from 'lodash/debounce'
 
 
+type OnSuccessFunc = (args: {
+    buyAmount: string
+    price: string
+    expectedOutput: string
+    slippage: string
+    minimumReceived: string
+}) => void
+
 export function useSwapDetails () {
 
     const [swapDetailsOpen, setSwapDetailsOpen] = useState(false)
@@ -14,21 +22,31 @@ export function useSwapDetails () {
     const [minimumReceived, setMinimumReceived] = useState('')
     const [insufficientLiquidity, setInsufficientLiquidity] = useState(false)
 
-    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: (expectedOutput: string) => void }) => {
+    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: OnSuccessFunc, reverse?: boolean }) => {
         if (swapDetailsArgs.sellAmount.trim().length > 0 && parseFloat(swapDetailsArgs.sellAmount) > 0) {
             setSwapDetailsOpen(true)
             setSwapDetailsLoading(true)
             setInsufficientLiquidity(false)
             try {
-                const swapDetails = await getSwapDetails(swapDetailsArgs)
+                const swapDetails = await getSwapDetails(swapDetailsArgs, Boolean(swapDetailsArgs.reverse))
+                const buyAmount = roundTo(swapDetails.buyAmount, 6).toString()
                 const expectedOutput = roundTo(swapDetails.expectedOutput, 6).toString()
-                setPrice(roundTo(swapDetails.price, 6).toString())
+                const price = roundTo(swapDetails.price, 6).toString()
+                const slippage = `${swapDetails.slippage}.00`
+                const minimumReceived = roundTo(swapDetails.minimumReceived, 6).toString()
+                setPrice(price)
                 setExpectedOutput(expectedOutput)
-                setSlippage(`${swapDetails.slippage}.00`)
-                setMinimumReceived(roundTo(swapDetails.minimumReceived, 6).toString())
+                setSlippage(slippage)
+                setMinimumReceived(minimumReceived)
                 setSwapDetailsLoading(false)
                 if (swapDetailsArgs.onSuccess) {
-                    swapDetailsArgs.onSuccess(expectedOutput)
+                    swapDetailsArgs.onSuccess({
+                        buyAmount,
+                        price,
+                        expectedOutput,
+                        slippage,
+                        minimumReceived,
+                    })
                 }
             } catch (e) {
                 console.error(e)
