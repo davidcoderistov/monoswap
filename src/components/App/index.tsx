@@ -69,11 +69,17 @@ export default function App () {
 
             const handleAccountsChange = (accounts: string[]) => {
                 setSelectedAccount(accounts.length > 0 ? accounts[0] : null)
+                if (!connectedTo) {
+                    setConnectedTo('metamask')
+                }
             }
             rpcProvider.on('accountsChanged', handleAccountsChange)
 
             const handleChainChanged = (chainId: string) => {
                 setSelectedChainId(Number(chainId))
+                if (!connectedTo) {
+                    setConnectedTo('metamask')
+                }
             }
             rpcProvider.on('chainChanged', handleChainChanged)
 
