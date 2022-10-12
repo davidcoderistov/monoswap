@@ -22,7 +22,7 @@ export function useSwapDetails () {
     const [minimumReceived, setMinimumReceived] = useState('')
     const [insufficientLiquidity, setInsufficientLiquidity] = useState(false)
 
-    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: OnSuccessFunc, reverse?: boolean }) => {
+    const tryFetchSwapDetails = useCallback(async (swapDetailsArgs: SwapDetailsArgs & { onSuccess?: OnSuccessFunc, onError?: () => void, reverse?: boolean }) => {
         if (swapDetailsArgs.sellAmount.trim().length > 0 && parseFloat(swapDetailsArgs.sellAmount) > 0) {
             setSwapDetailsOpen(true)
             setSwapDetailsLoading(true)
@@ -53,6 +53,9 @@ export function useSwapDetails () {
                 setSwapDetailsLoading(false)
                 setSwapDetailsOpen(false)
                 setInsufficientLiquidity(true)
+                if (swapDetailsArgs.onError) {
+                    swapDetailsArgs.onError()
+                }
             }
         } else {
             setSwapDetailsOpen(false)

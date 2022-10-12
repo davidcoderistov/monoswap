@@ -62,6 +62,9 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     sellAmount: fromInputValue,
                     onSuccess: ({ buyAmount }) => {
                         setToInputValue(buyAmount)
+                    },
+                    onError: () => {
+                        setToInputValue('')
                     }
                 })
             }
@@ -79,6 +82,9 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     sellAmount: toInputValue,
                     onSuccess: ({ buyAmount }) => {
                         setFromInputValue(buyAmount)
+                    },
+                    onError: () => {
+                        setFromInputValue('')
                     },
                     reverse: true,
                 })
@@ -104,6 +110,9 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 sellAmount: toInputValue,
                 onSuccess: ({ buyAmount }) => {
                     setToInputValue(buyAmount)
+                },
+                onError: () => {
+                    setToInputValue('')
                 }
             })
         } else {
@@ -130,6 +139,9 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     sellAmount: inputValue,
                     onSuccess: ({ buyAmount }) => {
                         setToInputValue(buyAmount)
+                    },
+                    onError: () => {
+                        setToInputValue('')
                     }
                 })
             }
@@ -152,6 +164,9 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     sellAmount: inputValue,
                     onSuccess: ({ buyAmount }) => {
                         setFromInputValue(buyAmount)
+                    },
+                    onError: () => {
+                        setFromInputValue('')
                     },
                     reverse: true,
                 })
