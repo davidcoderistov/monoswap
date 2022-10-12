@@ -22,20 +22,22 @@ interface SwapTokensProps {
     onToClick: () => void
     switchActive: boolean
     onSwitchClick: () => void
+    selectable?: boolean
 }
 
-export default function SwapTokens (props: SwapTokensProps) {
+export default function SwapTokens ({ selectable = true, ...props }: SwapTokensProps) {
     return (
         <React.Fragment>
             <TokenInput
                 type={props.fromType}
                 value={props.fromValue}
                 onChange={props.onFromChange}
-                disabled={props.fromDisabled}
+                disabled={props.fromDisabled || !selectable}
                 symbol={props.fromSymbol}
                 imgSrc={props.fromImgSrc}
                 balance={props.fromBalance}
-                onClick={props.onFromClick} />
+                onClick={props.onFromClick}
+                selectable={selectable} />
             <ArrowDownward
                 active={props.switchActive}
                 onClick={props.onSwitchClick} />
@@ -43,11 +45,12 @@ export default function SwapTokens (props: SwapTokensProps) {
                 type={props.toType}
                 value={props.toValue}
                 onChange={props.onToChange}
-                disabled={props.toDisabled}
+                disabled={props.toDisabled || !selectable}
                 symbol={props.toSymbol}
                 imgSrc={props.toImgSrc}
                 balance={props.toBalance}
-                onClick={props.onToClick} />
+                onClick={props.onToClick}
+                selectable={selectable}/>
         </React.Fragment>
     )
 }

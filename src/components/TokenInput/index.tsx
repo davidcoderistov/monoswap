@@ -8,10 +8,11 @@ export type TokenInputProps = {
     onChange?: (value: string) => void
     balance?: string
     disabled?: boolean
+    selectable?: boolean
 } & TokenProps
 
 
-export default function TokenInput ({ value, onChange, balance, disabled, type, symbol, imgSrc, onClick }: TokenInputProps) {
+export default function TokenInput ({ value, onChange, balance, disabled, selectable = true, type, symbol, imgSrc, onClick }: TokenInputProps) {
 
     const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         if (onChange) {
@@ -73,6 +74,7 @@ export default function TokenInput ({ value, onChange, balance, disabled, type, 
                     type={type}
                     symbol={symbol}
                     imgSrc={imgSrc}
+                    disabled={!selectable}
                     onClick={onClick}
                 />
             </Box>

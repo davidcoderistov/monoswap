@@ -7,6 +7,7 @@ import ActionButton from './ActionButton'
 import SelectTokenModal from '../SelectTokenModal'
 import SwapDetails from './SwapDetails'
 import { Token } from '../../types'
+import { isChainSupported } from '../../utils'
 import AppContext from '../../context'
 
 
@@ -186,6 +187,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 'Insufficient liquidity for this trade': insufficientBalance ?
                     `Insufficient ${fromToken?.symbol} balance` : 'Swap' : 'Connect Wallet'
 
+    const chainSupported = isChainSupported(selectedChainId)
+
     return (
         <Box
             component='div'
@@ -222,7 +225,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 toBalance={toBalance}
                 onToClick={handleOpenToSelectTokenModal}
                 switchActive={Boolean(fromToken) && Boolean(toToken) && !swapInfo.swapDetailsLoading}
-                onSwitchClick={handleSwapTokens} />
+                onSwitchClick={handleSwapTokens}
+                selectable={chainSupported} />
             { swapInfo.swapDetailsOpen && (
                 <SwapDetails
                     loading={swapInfo.swapDetailsLoading}
