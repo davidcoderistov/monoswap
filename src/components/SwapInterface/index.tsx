@@ -51,7 +51,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         if (type === 'from') {
             setFromToken(token)
             trySetFromBalance(token.address)
-            if (toToken && fromInputValue.trim().length > 0 && parseFloat(fromInputValue) > 0) {
+            if (toToken && hasInputValue(fromInputValue)) {
                 setCurrToken('to')
                 tryFetchSwapDetails({
                     chainId: selectedChainId,
@@ -71,7 +71,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         } else if (type === 'to') {
             setToToken(token)
             trySetToBalance(token.address)
-            if (fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+            if (fromToken && hasInputValue(toInputValue)) {
                 setCurrToken('from')
                 tryFetchSwapDetails({
                     chainId: selectedChainId,
@@ -99,7 +99,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setFromInputValue(toInputValue)
         setFromBalance(toBalance)
         setToBalance(fromBalance)
-        if (toToken && fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+        if (toToken && fromToken && hasInputValue(toInputValue)) {
             setCurrToken('to')
             tryFetchSwapDetails({
                 chainId: selectedChainId,
@@ -187,6 +187,10 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const handleApproveAllowance = () => {
         // TODO: Handle approve allowance
         setAllowance(true)
+    }
+
+    const hasInputValue = (inputValue: string) => {
+        return inputValue.trim().length > 0 && parseFloat(inputValue) > 0
     }
 
     const isConnected = Boolean(connectedTo) && Boolean(selectedAccount)
