@@ -51,6 +51,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             setFromToken(token)
             trySetFromBalance(token.address)
             if (toToken && fromInputValue.trim().length > 0 && parseFloat(fromInputValue) > 0) {
+                setCurrToken('to')
                 tryFetchSwapDetails({
                     chainId: selectedChainId,
                     sellTokenAddress: token.address,
@@ -67,6 +68,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             setToToken(token)
             trySetToBalance(token.address)
             if (fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+                setCurrToken('from')
                 tryFetchSwapDetails({
                     chainId: selectedChainId,
                     sellTokenAddress: fromToken.address,
@@ -91,6 +93,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setFromBalance(toBalance)
         setToBalance(fromBalance)
         if (toToken && fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+            setCurrToken('to')
             tryFetchSwapDetails({
                 chainId: selectedChainId,
                 sellTokenAddress: toToken.address,
