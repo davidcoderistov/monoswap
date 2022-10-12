@@ -25,7 +25,7 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
         metamask
     } = useContext(AppContext)
 
-    const [selectedWallet, setSelectedWallet] = useState<'metamask' | 'walletconnect'>('metamask')
+    const [selectedWallet, setSelectedWallet] = useState<'metamask'>('metamask')
     const [isWalletsView, setIsWalletsView] = useState(false)
     const [isAccountView, setIsAccountView] = useState(false)
     const [isActionable, setIsActionable] = useState(false)
@@ -49,7 +49,6 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
     const [isError, setIsError] = useState(false)
 
     useEffect(() => {
-        // TODO: Write logic for WalletConnect
         if (metamask.isConnecting || metamask.isError) {
             setIsWalletsView(false)
             setIsActionable(true)
@@ -59,7 +58,7 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
     }, [metamask.isConnecting, metamask.isError])
 
 
-    const handleConnectWallet = (wallet: 'metamask' | 'walletconnect') => {
+    const handleConnectWallet = (wallet: 'metamask') => {
         setSelectedWallet(wallet)
         if (connectedTo === wallet) {
             handleClickBack()
@@ -87,8 +86,6 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
                 } else {
                     window.open('https://metamask.io/')
                 }
-            } else if (wallet === 'walletconnect') {
-                // TODO: Handle WalletConnect connection
             }
         }
     }

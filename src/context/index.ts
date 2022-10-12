@@ -6,7 +6,7 @@ export type Provider = ethers.providers.Web3Provider | null
 
 export type Account = string | null
 
-export type Wallet = 'metamask' | 'walletconnect' | null
+export type Wallet = 'metamask' | null
 
 export interface Metamask {
     isInstalled: boolean

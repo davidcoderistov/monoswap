@@ -4,7 +4,7 @@ import { Circle } from '@mui/icons-material'
 import Image from '../Image'
 
 
-type Wallet = 'metamask' | 'walletconnect'
+type Wallet = 'metamask'
 
 export interface WalletButtonProps {
     id: Wallet

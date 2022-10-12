@@ -13,7 +13,7 @@ export default function TermsView () {
         >
             <Typography fontSize={12}>
                 By connecting a wallet, you agree to Monoswap's Terms of Service and acknowledge that you have read
-                and understand the 1inch Aggregation Protocol.
+                and understand the 0x Protocol.
             </Typography>
         </Box>
     )

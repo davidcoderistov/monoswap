@@ -159,8 +159,6 @@ export default function App () {
                         trySwitchNetwork()
                     }
                 }
-            } else if (connectedTo === 'walletconnect') {
-                // TODO: Handle network change when connected to WalletConnect
             } else {
                 setSelectedChainId(chainId)
             }

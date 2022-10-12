@@ -4,7 +4,7 @@ import WalletButton, { WalletButtonProps } from './WalletButton'
 
 
 interface WalletsViewProps {
-    connectedTo: 'metamask' | 'walletconnect' | null
+    connectedTo: 'metamask' | null
     isMetamaskInstalled: boolean
     onClick: WalletButtonProps['onClick']
 }
@@ -19,13 +19,6 @@ export default function WalletsView (props: WalletsViewProps) {
                 title={props.isMetamaskInstalled ? 'MetaMask' : 'Install MetaMask'}
                 imgSrc='/metamask.png'
                 connected={props.connectedTo === 'metamask'}
-                onClick={props.onClick} />
-            <Box mb='10px' />
-            <WalletButton
-                id='walletconnect'
-                title='WalletConnect'
-                imgSrc='/walletconnect.png'
-                connected={props.connectedTo === 'walletconnect'}
                 onClick={props.onClick} />
             <Box mt='15px' />
         </Box>
