@@ -51,6 +51,7 @@ export function useSwapDetails () {
             } catch (e) {
                 console.error(e)
                 setSwapDetailsLoading(false)
+                setSwapDetailsOpen(false)
                 setInsufficientLiquidity(true)
             }
         } else {
