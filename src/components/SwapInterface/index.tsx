@@ -50,9 +50,36 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         if (type === 'from') {
             setFromToken(token)
             trySetFromBalance(token.address)
+            if (toToken && fromInputValue.trim().length > 0 && parseFloat(fromInputValue) > 0) {
+                tryFetchSwapDetails({
+                    chainId: selectedChainId,
+                    sellTokenAddress: token.address,
+                    sellTokenDecimals: token.decimals,
+                    buyTokenAddress: toToken.address,
+                    buyTokenDecimals: toToken.decimals,
+                    sellAmount: fromInputValue,
+                    onSuccess: ({ buyAmount }) => {
+                        setToInputValue(buyAmount)
+                    }
+                })
+            }
         } else if (type === 'to') {
             setToToken(token)
             trySetToBalance(token.address)
+            if (fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+                tryFetchSwapDetails({
+                    chainId: selectedChainId,
+                    sellTokenAddress: fromToken.address,
+                    sellTokenDecimals: fromToken.decimals,
+                    buyTokenAddress: token.address,
+                    buyTokenDecimals: token.decimals,
+                    sellAmount: toInputValue,
+                    onSuccess: ({ buyAmount }) => {
+                        setFromInputValue(buyAmount)
+                    },
+                    reverse: true,
+                })
+            }
         }
         setSelectTokenOpen(false)
     }
