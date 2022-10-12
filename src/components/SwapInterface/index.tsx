@@ -88,9 +88,23 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setFromToken(toToken ?? null)
         setToToken(fromToken ?? null)
         setFromInputValue(toInputValue)
-        setToInputValue(fromInputValue)
         setFromBalance(toBalance)
         setToBalance(fromBalance)
+        if (toToken && fromToken && toInputValue.trim().length > 0 && parseFloat(toInputValue) > 0) {
+            tryFetchSwapDetails({
+                chainId: selectedChainId,
+                sellTokenAddress: toToken.address,
+                sellTokenDecimals: toToken.decimals,
+                buyTokenAddress: fromToken.address,
+                buyTokenDecimals: fromToken.decimals,
+                sellAmount: toInputValue,
+                onSuccess: ({ buyAmount }) => {
+                    setToInputValue(buyAmount)
+                }
+            })
+        } else {
+            setToInputValue(fromInputValue)
+        }
     }
 
     const [fromInputValue, setFromInputValue] = useState('')
