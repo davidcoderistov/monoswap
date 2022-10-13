@@ -166,19 +166,12 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         }
     }
 
-    const [allowance, setAllowance] = useState(false)
-
     const handleSwapOrConnect = () => {
         if (isConnected) {
             // TODO: Handle swap
         } else {
             onConnectWallet()
         }
-    }
-
-    const handleApproveAllowance = () => {
-        // TODO: Handle approve allowance
-        setAllowance(true)
     }
 
     const hasInputValue = (inputValue: string) => {
@@ -191,7 +184,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const swapState = !Boolean(selectState) && !Boolean(enterState)
     const insufficientBalance = !fromBalance || parseFloat(fromInputValue) > parseFloat(fromBalance)
 
-    const btnType = !isConnected || (isConnected && swapState && allowance) ? 'actionable' : 'disabled'
+    const btnType = !isConnected || (isConnected && swapState && !swapInfo.insufficientLiquidity && !insufficientBalance) ? 'actionable' : 'disabled'
     const btnName = isConnected ?
         selectState ? 'Select a token' :
             enterState ? 'Enter an amount' : swapInfo.insufficientLiquidity ?
@@ -247,12 +240,6 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     expected={swapDetails.expectedOutput}
                     slippage={swapDetails.slippage}
                     minimum={swapDetails.minimumReceived} />
-            )}
-            { swapState && !allowance && (
-                <ActionButton
-                    type='actionable'
-                    name={`Allow Monoswap to use your ${fromToken?.symbol}`}
-                    onClick={handleApproveAllowance} />
             )}
             <ActionButton
                 type={btnType}
