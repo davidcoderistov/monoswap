@@ -6,6 +6,7 @@ import SwapTokens from '../SwapTokens'
 import ActionButton from './ActionButton'
 import SelectTokenModal from '../SelectTokenModal'
 import SwapDetails from './SwapDetails'
+import SwapDetailsModal from '../SwapDetailsModal'
 import { Token } from '../../types'
 import { isChainSupported } from '../../utils'
 import AppContext from '../../context'
@@ -24,6 +25,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     } = useContext(AppContext)
 
     const [selectTokenOpen, setSelectTokenOpen] = useState(false)
+    const [swapOpen, setSwapOpen] = useState(false)
     const [type, setType] = useState<'from' | 'to'>('from')
 
     const handleOpenFromSelectTokenModal = () => {
@@ -168,10 +170,14 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
 
     const handleSwapOrConnect = () => {
         if (isConnected) {
-            // TODO: Handle swap
+            setSwapOpen(true)
         } else {
             onConnectWallet()
         }
+    }
+
+    const handleCloseSwapModal = () => {
+        setSwapOpen(false)
     }
 
     const hasInputValue = (inputValue: string) => {
@@ -184,7 +190,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const swapState = !Boolean(selectState) && !Boolean(enterState)
     const insufficientBalance = !fromBalance || parseFloat(fromInputValue) > parseFloat(fromBalance)
 
-    const btnType = !isConnected || (isConnected && swapState && !swapInfo.insufficientLiquidity && !insufficientBalance) ? 'actionable' : 'disabled'
+    const btnType = !isConnected || (isConnected && swapState && !swapInfo.insufficientLiquidity && !insufficientBalance && !swapInfo.swapDetailsLoading) ? 'actionable' : 'disabled'
     const btnName = isConnected ?
         selectState ? 'Select a token' :
             enterState ? 'Enter an amount' : swapInfo.insufficientLiquidity ?
@@ -249,6 +255,19 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                 open={selectTokenOpen}
                 onClose={handleCloseSelectTokenModal}
                 onTokenSelect={handleSelectToken} />
+            <SwapDetailsModal
+                open={swapOpen}
+                sellToken={fromToken}
+                buyToken={toToken}
+                swapDetails={{
+                    sellAmount: fromInputValue,
+                    buyAmount: toInputValue,
+                    price: swapDetails?.price ?? '',
+                    expected: swapDetails?.expectedOutput ?? '',
+                    slippage: swapDetails?.slippage ?? '',
+                    minimum: swapDetails?.minimumReceived ?? '',
+                }}
+                onClose={handleCloseSwapModal} />
         </Box>
     )
 }
