@@ -4,13 +4,31 @@ import { Close } from '@mui/icons-material'
 import ActionButton from '../ActionButton'
 import ViewSwapTokens from '../ViewSwapTokens'
 import SwapDetails from '../SwapDetails'
+import { Token } from '../../types'
 
 
-export default function SwapDetailsModal () {
+interface SwapDetailsI {
+    sellAmount: string
+    buyAmount: string
+    price: string
+    expected: string
+    slippage: string
+    minimum: string
+}
+
+interface SwapDetailsModalProps {
+    open: boolean
+    sellToken: Token | null
+    buyToken: Token | null
+    swapDetails: SwapDetailsI
+    onClose: () => void
+}
+
+export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onClose }: SwapDetailsModalProps) {
 
     return (
         <Dialog
-            open={true}
+            open={open}
             fullWidth
             sx={{
                 '.MuiDialog-paper': {
@@ -33,28 +51,28 @@ export default function SwapDetailsModal () {
                     marginBottom='15px'
                 >
                     <Typography>Confirm Swap</Typography>
-                    <ActionButton disabled={false} onClick={() => {}}>
+                    <ActionButton disabled={false} onClick={onClose}>
                         <Close />
                     </ActionButton>
                 </Box>
                 <ViewSwapTokens
-                    fromValue='1'
-                    fromSymbol='1INCH'
-                    fromImgSrc='https://assets.coingecko.com/coins/images/13469/thumb/1inch-token.png?1608803028'
-                    toValue='0.00262297'
-                    toSymbol='AAVE'
-                    toImgSrc='https://assets.coingecko.com/coins/images/12645/thumb/AAVE.png?1601374110' />
+                    fromValue={swapDetails.sellAmount}
+                    fromSymbol={sellToken?.symbol ?? ''}
+                    fromImgSrc={sellToken?.thumbnail ?? ''}
+                    toValue={swapDetails.buyAmount}
+                    toSymbol={buyToken?.symbol ?? ''}
+                    toImgSrc={buyToken?.thumbnail ?? ''} />
                 <Typography color='#FFFFFF' fontSize='14px' marginY='15px' marginLeft='15px'>
-                    1 AAVE = 381.2 1INCH
+                    1 {sellToken?.symbol} = {swapDetails.price} {buyToken?.symbol}
                 </Typography>
                 <SwapDetails
                     bgcolor='#212429'
                     borderRadius='20px'
                     padding='15px'
-                    symbol='DAI'
-                    expected='0.00262297'
-                    slippage='2.00'
-                    minimum='0.00257154' />
+                    symbol={buyToken?.symbol ?? ''}
+                    expected={swapDetails.expected}
+                    slippage={swapDetails.slippage}
+                    minimum={swapDetails.minimum} />
                 <Typography
                     component='div'
                     color='#989AA0'
@@ -68,7 +86,7 @@ export default function SwapDetailsModal () {
                             fontSize={12}
                             fontWeight='bold'
                         >
-                        0.002571 AAVE
+                        {swapDetails.minimum} {buyToken?.symbol}
                     </Typography> or the transaction will revert.
                 </Typography>
                 <Button
