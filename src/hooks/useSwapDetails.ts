@@ -1,16 +1,18 @@
-import {useState, useCallback, useMemo} from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { getSwapDetails, SwapDetailsArgs } from '../services'
 import { roundTo } from '../utils'
 import _debounce from 'lodash/debounce'
 
 
-type OnSuccessFunc = (args: {
+export interface SuccessFuncArgs {
     buyAmount: string
     price: string
     expectedOutput: string
     slippage: string
     minimumReceived: string
-}) => void
+}
+
+type OnSuccessFunc = (args: SuccessFuncArgs) => void
 
 export function useSwapDetails () {
 

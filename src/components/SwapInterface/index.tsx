@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { useBalance } from '../../hooks/useBalance'
-import { useSwapDetails } from '../../hooks/useSwapDetails'
+import { useSwapDetails, SuccessFuncArgs } from '../../hooks/useSwapDetails'
 import { Box, Typography } from '@mui/material'
 import SwapTokens from '../SwapTokens'
 import ActionButton from './ActionButton'
@@ -51,43 +51,22 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         if (type === 'from') {
             setFromToken(token)
             trySetFromBalance(token.address)
-            if (toToken && hasInputValue(fromInputValue)) {
-                setCurrToken('to')
-                tryFetchSwapDetails({
-                    chainId: selectedChainId,
-                    sellTokenAddress: token.address,
-                    sellTokenDecimals: token.decimals,
-                    buyTokenAddress: toToken.address,
-                    buyTokenDecimals: toToken.decimals,
-                    sellAmount: fromInputValue,
-                    onSuccess: ({ buyAmount }) => {
-                        setToInputValue(buyAmount)
-                    },
-                    onError: () => {
-                        setToInputValue('')
-                    }
-                })
+            if (toToken) {
+                if (hasInputValue(fromInputValue)) {
+                    trySellFromToken(token, toToken, fromInputValue)
+                } else if (hasInputValue(toInputValue)) {
+                    trySellToToken(toToken, token, toInputValue)
+                }
             }
         } else if (type === 'to') {
             setToToken(token)
             trySetToBalance(token.address)
-            if (fromToken && hasInputValue(toInputValue)) {
-                setCurrToken('from')
-                tryFetchSwapDetails({
-                    chainId: selectedChainId,
-                    sellTokenAddress: fromToken.address,
-                    sellTokenDecimals: fromToken.decimals,
-                    buyTokenAddress: token.address,
-                    buyTokenDecimals: token.decimals,
-                    sellAmount: toInputValue,
-                    onSuccess: ({ buyAmount }) => {
-                        setFromInputValue(buyAmount)
-                    },
-                    onError: () => {
-                        setFromInputValue('')
-                    },
-                    reverse: true,
-                })
+            if (fromToken) {
+                if (hasInputValue(toInputValue)) {
+                    trySellToToken(token, fromToken, toInputValue)
+                } else if (hasInputValue(fromInputValue)) {
+                    trySellFromToken(fromToken, token, fromInputValue)
+                }
             }
         }
         setSelectTokenOpen(false)
@@ -96,26 +75,21 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const handleSwapTokens = () => {
         setFromToken(toToken ?? null)
         setToToken(fromToken ?? null)
-        setFromInputValue(toInputValue)
         setFromBalance(toBalance)
         setToBalance(fromBalance)
-        if (toToken && fromToken && hasInputValue(toInputValue)) {
-            setCurrToken('to')
-            tryFetchSwapDetails({
-                chainId: selectedChainId,
-                sellTokenAddress: toToken.address,
-                sellTokenDecimals: toToken.decimals,
-                buyTokenAddress: fromToken.address,
-                buyTokenDecimals: fromToken.decimals,
-                sellAmount: toInputValue,
-                onSuccess: ({ buyAmount }) => {
-                    setToInputValue(buyAmount)
-                },
-                onError: () => {
-                    setToInputValue('')
-                }
-            })
+        if (fromToken && toToken) {
+            if (hasInputValue(toInputValue)) {
+                setFromInputValue(toInputValue)
+                trySellFromToken(toToken, fromToken, toInputValue)
+            } else if (hasInputValue(fromInputValue)) {
+                setToInputValue(fromInputValue)
+                trySellToToken(fromToken, toToken, fromInputValue)
+            } else {
+                setFromInputValue(toInputValue)
+                setToInputValue(fromInputValue)
+            }
         } else {
+            setFromInputValue(toInputValue)
             setToInputValue(fromInputValue)
         }
     }
@@ -125,52 +99,70 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
 
     const handleFromInputValueChange = async (inputValue: string) => {
         setFromInputValue(inputValue)
-        setCurrToken('to')
         if (selectState) {
             setToInputValue('')
         } else {
             if (fromToken && toToken) {
-                tryFetchSwapDetailsDebounced({
-                    chainId: selectedChainId,
-                    sellTokenAddress: fromToken.address,
-                    sellTokenDecimals: fromToken.decimals,
-                    buyTokenAddress: toToken.address,
-                    buyTokenDecimals: toToken.decimals,
-                    sellAmount: inputValue,
-                    onSuccess: ({ buyAmount }) => {
-                        setToInputValue(buyAmount)
-                    },
-                    onError: () => {
-                        setToInputValue('')
-                    }
-                })
+                trySellFromToken(fromToken, toToken, inputValue, true)
             }
         }
     }
 
     const handleToInputValueChange = async (inputValue: string) => {
         setToInputValue(inputValue)
-        setCurrToken('from')
         if (selectState) {
             setFromInputValue('')
         } else {
             if (fromToken && toToken) {
-                tryFetchSwapDetailsDebounced({
-                    chainId: selectedChainId,
-                    sellTokenAddress: toToken.address,
-                    sellTokenDecimals: toToken.decimals,
-                    buyTokenAddress: fromToken.address,
-                    buyTokenDecimals: fromToken.decimals,
-                    sellAmount: inputValue,
-                    onSuccess: ({ buyAmount }) => {
-                        setFromInputValue(buyAmount)
-                    },
-                    onError: () => {
-                        setFromInputValue('')
-                    },
-                    reverse: true,
-                })
+                trySellToToken(toToken, fromToken, inputValue, true)
             }
+        }
+    }
+
+    const trySellFromToken = (sellToken: Token, buyToken: Token, amount: string, debounced: boolean = false) => {
+        setCurrToken('to')
+        const swapDetailsArgs = {
+            chainId: selectedChainId,
+            sellTokenAddress: sellToken.address,
+            sellTokenDecimals: sellToken.decimals,
+            buyTokenAddress: buyToken.address,
+            buyTokenDecimals: buyToken.decimals,
+            sellAmount: amount,
+            onSuccess: ({ buyAmount }: SuccessFuncArgs) => {
+                setToInputValue(buyAmount)
+            },
+            onError: () => {
+                setToInputValue('')
+            }
+        }
+        if (debounced) {
+            tryFetchSwapDetailsDebounced(swapDetailsArgs)
+        } else {
+            tryFetchSwapDetails(swapDetailsArgs)
+        }
+    }
+
+    const trySellToToken = (sellToken: Token, buyToken: Token, amount: string, debounced: boolean = false) => {
+        setCurrToken('from')
+        const swapDetailsArgs = {
+            chainId: selectedChainId,
+            sellTokenAddress: sellToken.address,
+            sellTokenDecimals: sellToken.decimals,
+            buyTokenAddress: buyToken.address,
+            buyTokenDecimals: buyToken.decimals,
+            sellAmount: amount,
+            onSuccess: ({ buyAmount }: SuccessFuncArgs) => {
+                setFromInputValue(buyAmount)
+            },
+            onError: () => {
+                setFromInputValue('')
+            },
+            reverse: true,
+        }
+        if (debounced) {
+            tryFetchSwapDetailsDebounced(swapDetailsArgs)
+        } else {
+            tryFetchSwapDetails(swapDetailsArgs)
         }
     }
 
