@@ -170,3 +170,20 @@ export async function checkAllowance (chainId: number, sellToken: Token, walletA
         throw new Error('Chain id is not valid')
     }
 }
+
+export async function approveAllowance (chainId: number, sellTokenAddress: string, sellAmount: string, walletAddress: string) {
+    const zeroExAddress = get0xContractAddress(chainId)
+    if (zeroExAddress) {
+        try {
+            const web3 = new Web3(Web3.givenProvider)
+            const contract = new web3.eth.Contract(ERC20_ABI as AbiItem[], sellTokenAddress)
+            return await contract.methods
+                .approve(zeroExAddress, sellAmount)
+                .send({ from: walletAddress })
+        } catch (e) {
+            throw e
+        }
+    } else {
+        throw new Error('Chain id is not valid')
+    }
+}
