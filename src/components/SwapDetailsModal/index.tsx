@@ -8,7 +8,7 @@ import AllowanceButton from '../SwapInterface/ActionButton'
 import Tooltip from '../Tooltip'
 import { Warning } from '@mui/icons-material'
 import { Token } from '../../types'
-import { checkAllowance } from '../../services'
+import { checkAllowance, approveAllowance } from '../../services'
 import AppContext from '../../context'
 
 
@@ -35,6 +35,7 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
 
     const [loadingAllowance, setLoadingAllowance] = useState(true)
     const [allowance, setAllowance] = useState(false)
+    const [approvingAllowance, setApprovingAllowance] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     useEffect(() => {
@@ -52,12 +53,17 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                 }
                 tryCheckAllowance()
             }
-        } else {
-            setLoadingAllowance(true)
-            setAllowance(false)
-            setErrorMessage(null)
         }
     }, [open, selectedChainId, selectedAccount, sellToken, swapDetails.sellAmount])
+
+    useEffect(() => {
+        if (!open) {
+            setLoadingAllowance(true)
+            setAllowance(false)
+            setApprovingAllowance(false)
+            setErrorMessage(null)
+        }
+    }, [open])
 
     const [tooltipOpen, setTooltipOpen] = useState(false)
 
@@ -67,6 +73,34 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
 
     const handleCloseTooltip = () => {
         setTooltipOpen(false)
+    }
+
+    const tryApproveAllowance = async () => {
+        setApprovingAllowance(true)
+        setErrorMessage(null)
+        if (selectedChainId && selectedAccount && sellToken) {
+            try {
+                const approved = await approveAllowance(
+                    selectedChainId,
+                    sellToken.address,
+                    swapDetails.sellAmount,
+                    selectedAccount
+                )
+                if (approved?.status) {
+                    setApprovingAllowance(false)
+                    setAllowance(true)
+                    return
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        setApprovingAllowance(false)
+        setErrorMessage(`Monoswap could not approve your ${sellToken?.symbol} allowance.`)
+    }
+
+    const handleOnApproveAllowance = () => {
+        tryApproveAllowance()
     }
 
     return (
@@ -164,7 +198,8 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                     <AllowanceButton
                         type='actionable'
                         name={`Allow Monoswap to use your ${sellToken?.symbol}`}
-                        onClick={() => {}} />
+                        loading={approvingAllowance}
+                        onClick={handleOnApproveAllowance} />
                 )}
                 <Button
                     variant='contained'
