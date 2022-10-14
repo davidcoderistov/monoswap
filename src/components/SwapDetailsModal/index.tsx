@@ -82,7 +82,7 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
             try {
                 const approved = await approveAllowance(
                     selectedChainId,
-                    sellToken.address,
+                    sellToken,
                     swapDetails.sellAmount,
                     selectedAccount
                 )
