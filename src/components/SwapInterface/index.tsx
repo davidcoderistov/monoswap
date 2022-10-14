@@ -190,7 +190,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const swapState = !Boolean(selectState) && !Boolean(enterState)
     const insufficientBalance = !fromBalance || parseFloat(fromInputValue) > parseFloat(fromBalance)
 
-    const btnType = !isConnected || (isConnected && swapState && !swapInfo.insufficientLiquidity && !insufficientBalance && !swapInfo.swapDetailsLoading) ? 'actionable' : 'disabled'
+    const btnType = !isConnected || (isConnected && swapState && !swapInfo.insufficientLiquidity && !insufficientBalance && !swapInfo.swapDetailsLoading && hasInputValue(fromInputValue) && hasInputValue(toInputValue)) ? 'actionable' : 'disabled'
     const btnName = isConnected ?
         selectState ? 'Select a token' :
             enterState ? 'Enter an amount' : swapInfo.insufficientLiquidity ?
