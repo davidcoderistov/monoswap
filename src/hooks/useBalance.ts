@@ -9,15 +9,15 @@ export function useBalance () {
 
     const [balance, setBalance] = useState<string | undefined>(undefined)
 
-    const fetchTokenBalance = useCallback(async (tokenAddress: string) => {
+    const fetchTokenBalance = useCallback(async (tokenAddress: string, tokenDecimals: number) => {
         if (selectedAccount && selectedChainId) {
-            return await getTokenBalance(selectedChainId, selectedAccount, tokenAddress)
+            return await getTokenBalance(selectedChainId, selectedAccount, tokenAddress, tokenDecimals)
         }
     }, [selectedAccount, selectedChainId])
 
-    const trySetBalance = async (tokenAddress: string) => {
+    const trySetBalance = async (tokenAddress: string, tokenDecimals: number) => {
         try {
-            const tokenBalance = await fetchTokenBalance(tokenAddress)
+            const tokenBalance = await fetchTokenBalance(tokenAddress, tokenDecimals)
             if (typeof tokenBalance !== 'undefined') {
                 setBalance(tokenBalance.toString())
             }

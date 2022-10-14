@@ -44,7 +44,7 @@ export async function getTokens (): Promise<TokenI[]> {
 
 const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY
 
-export async function getTokenBalance (chainId: number, ownerAddress: string, tokenAddress: string) {
+export async function getTokenBalance (chainId: number, ownerAddress: string, tokenAddress: string, tokenDecimals: number) {
 
     const baseURL = getAlchemyBaseUrl(chainId)
 
@@ -77,7 +77,7 @@ export async function getTokenBalance (chainId: number, ownerAddress: string, to
                     } else {
                         return parseFloat(ethers.utils.formatUnits(
                             ethers.BigNumber.from(tokenBalance),
-                            18,
+                            tokenDecimals,
                         ))
                     }
                 }

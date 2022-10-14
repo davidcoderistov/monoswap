@@ -52,7 +52,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const handleSelectToken = (token: Token) => {
         if (type === 'from') {
             setFromToken(token)
-            trySetFromBalance(token.address)
+            trySetFromBalance(token.address, token.decimals)
             if (toToken) {
                 if (hasInputValue(fromInputValue)) {
                     trySellFromToken(token, toToken, fromInputValue)
@@ -62,7 +62,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             }
         } else if (type === 'to') {
             setToToken(token)
-            trySetToBalance(token.address)
+            trySetToBalance(token.address, token.decimals)
             if (fromToken) {
                 if (hasInputValue(toInputValue)) {
                     trySellToToken(token, fromToken, toInputValue)
