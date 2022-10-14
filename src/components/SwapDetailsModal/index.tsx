@@ -5,6 +5,8 @@ import ActionButton from '../ActionButton'
 import ViewSwapTokens from '../ViewSwapTokens'
 import SwapDetails from '../SwapDetails'
 import AllowanceButton from '../SwapInterface/ActionButton'
+import Tooltip from '../Tooltip'
+import { Warning } from '@mui/icons-material'
 import { Token } from '../../types'
 import { checkAllowance } from '../../services'
 import AppContext from '../../context'
@@ -33,18 +35,19 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
 
     const [loadingAllowance, setLoadingAllowance] = useState(true)
     const [allowance, setAllowance] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
     useEffect(() => {
         if (open) {
             if (sellToken && selectedAccount) {
                 const tryCheckAllowance = async () => {
-                    setLoadingAllowance(true)
                     try {
                         const allowance = await checkAllowance(selectedChainId, sellToken, selectedAccount)
                         setAllowance(parseFloat(swapDetails.sellAmount) <= allowance)
                         setLoadingAllowance(false)
                     } catch (e) {
                         console.error(e)
+                        setErrorMessage(`Monoswap could not check your ${sellToken.symbol} allowance.`)
                     }
                 }
                 tryCheckAllowance()
@@ -52,8 +55,19 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
         } else {
             setLoadingAllowance(true)
             setAllowance(false)
+            setErrorMessage(null)
         }
     }, [open, selectedChainId, selectedAccount, sellToken, swapDetails.sellAmount])
+
+    const [tooltipOpen, setTooltipOpen] = useState(false)
+
+    const handleOpenTooltip = () => {
+        setTooltipOpen(true)
+    }
+
+    const handleCloseTooltip = () => {
+        setTooltipOpen(false)
+    }
 
     return (
         <Dialog
@@ -79,7 +93,35 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                     alignItems='center'
                     marginBottom='15px'
                 >
-                    <Typography>Confirm Swap</Typography>
+                    <Box
+                        component='div'
+                        display='flex'
+                        flexDirection='row'
+                        alignItems='center'
+                        columnGap='10px'
+                    >
+                        <Typography>Confirm Swap</Typography>
+                        { errorMessage && (
+                            <Tooltip
+                                title={<Typography variant='subtitle2'>
+                                    { errorMessage }
+                                </Typography>}
+                                placement='bottom-start'
+                                enterDelay={0}
+                                open={tooltipOpen}
+                                onOpen={handleOpenTooltip}
+                                onClose={handleCloseTooltip}
+                            >
+                                <Warning
+                                    color='error'
+                                    sx={{
+                                        fontSize: '18px',
+                                        marginTop: '1px',
+                                    }}
+                                />
+                            </Tooltip>
+                        )}
+                    </Box>
                     <ActionButton disabled={false} onClick={onClose}>
                         <Close />
                     </ActionButton>
