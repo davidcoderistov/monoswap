@@ -1,10 +1,11 @@
 import React from 'react'
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
 
 
 export type ActionButtonProps = {
     type: 'actionable' | 'disabled'
     name: string
+    loading?: boolean
     onClick: () => void
 }
 
@@ -33,9 +34,17 @@ export default function ActionButton (props: ActionButtonProps) {
                 paddingY: '12px'
             }}
             onClick={props.onClick}
-            disabled={!isActionable}
+            disabled={!isActionable || props.loading}
         >
-            { props.name }
+            { props.loading ? (
+                <CircularProgress
+                    sx={{
+                        color: '#5090EA',
+                        '.MuiCircularProgress-circle': { animationDuration: '5s'}
+                    }}
+                    size={28}
+                    thickness={5} />
+            ): props.name }
         </Button>
     )
 }
