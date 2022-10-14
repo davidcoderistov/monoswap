@@ -1,5 +1,5 @@
 import { NETWORKS, IMAGES } from '../config'
-import { Token, Blockchain } from '../types'
+import { Token } from '../types'
 import { ethers } from 'ethers'
 
 export function getNetwork (chainId: number): string | null {
@@ -333,6 +333,23 @@ export function get0xBaseUrl (chainId: number) {
             return 'https://optimism.api.0x.org/'
         case 42161:
             return 'https://arbitrum.api.0x.org/'
+        default:
+            return null
+    }
+}
+
+export function get0xContractAddress (chainId: number) {
+    switch (chainId) {
+        case 1:
+            return '0xdef1c0ded9bec7f1a1670819833240f027b25eff'
+        case 5:
+            return '0xf91bb752490473b8342a3e964e855b9f9a2a668e'
+        case 137:
+            return '0xdef1c0ded9bec7f1a1670819833240f027b25eff'
+        case 10:
+            return '0xdef1abe32c034e558cdd535791643c58a13acc10'
+        case 42161:
+            return '0xdef1c0ded9bec7f1a1670819833240f027b25eff'
         default:
             return null
     }
