@@ -1,7 +1,11 @@
 import axios from 'axios'
-import { getAlchemyBaseUrl, get0xBaseUrl } from '../utils'
+import { getAlchemyBaseUrl, get0xBaseUrl, get0xContractAddress } from '../utils'
 import { ethers } from 'ethers'
+import Web3 from 'web3'
+import { AbiItem } from 'web3-utils'
 import qs from 'qs'
+import { ERC20_ABI } from '../abis/erc20'
+import { Token } from '../types'
 
 
 interface BridgeTokenI {
@@ -135,6 +139,30 @@ export async function getSwapDetails (swapDetails: SwapDetailsArgs, reverse = fa
                 slippage: 1,
                 minimumReceived: buyUnits * 0.99,
             }
+        } catch (e) {
+            throw e
+        }
+    } else {
+        throw new Error('Chain id is not valid')
+    }
+}
+
+export async function checkAllowance (chainId: number, sellToken: Token, walletAddress: string) {
+    const zeroExAddress = get0xContractAddress(chainId)
+    if (zeroExAddress) {
+        try {
+            const web3 = new Web3(Web3.givenProvider)
+            const contract = new web3.eth.Contract(ERC20_ABI as AbiItem[], sellToken.address)
+            const allowance = await contract.methods.allowance(walletAddress, zeroExAddress).call()
+            if (parseFloat(allowance)) {
+                return parseFloat(
+                    ethers.utils.formatUnits(
+                        ethers.BigNumber.from(allowance),
+                        sellToken.decimals,
+                    )
+                )
+            }
+            return 0
         } catch (e) {
             throw e
         }
