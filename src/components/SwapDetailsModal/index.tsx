@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Dialog, Box, Typography, Button } from '@mui/material'
 import { Close } from '@mui/icons-material'
 import ActionButton from '../ActionButton'
 import ViewSwapTokens from '../ViewSwapTokens'
 import SwapDetails from '../SwapDetails'
+import AllowanceButton from '../SwapInterface/ActionButton'
 import { Token } from '../../types'
+import { checkAllowance } from '../../services'
+import AppContext from '../../context'
 
 
 interface SwapDetailsI {
@@ -25,6 +28,32 @@ interface SwapDetailsModalProps {
 }
 
 export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onClose }: SwapDetailsModalProps) {
+
+    const { selectedChainId, selectedAccount } = useContext(AppContext)
+
+    const [loadingAllowance, setLoadingAllowance] = useState(true)
+    const [allowance, setAllowance] = useState(false)
+
+    useEffect(() => {
+        if (open) {
+            if (sellToken && selectedAccount) {
+                const tryCheckAllowance = async () => {
+                    setLoadingAllowance(true)
+                    try {
+                        const allowance = await checkAllowance(selectedChainId, sellToken, selectedAccount)
+                        setAllowance(parseFloat(swapDetails.sellAmount) <= allowance)
+                        setLoadingAllowance(false)
+                    } catch (e) {
+                        console.error(e)
+                    }
+                }
+                tryCheckAllowance()
+            }
+        } else {
+            setLoadingAllowance(true)
+            setAllowance(false)
+        }
+    }, [open, selectedChainId, selectedAccount, sellToken, swapDetails.sellAmount])
 
     return (
         <Dialog
@@ -89,13 +118,27 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                         {swapDetails.minimum} {buyToken?.symbol}
                     </Typography> or the transaction will revert.
                 </Typography>
+                { !loadingAllowance && !allowance && (
+                    <AllowanceButton
+                        type='actionable'
+                        name={`Allow Monoswap to use your ${sellToken?.symbol}`}
+                        onClick={() => {}} />
+                )}
                 <Button
                     variant='contained'
                     color='primary'
                     size='large'
                     fullWidth
-                    sx={{ borderRadius: '20px', textTransform: 'none', marginTop: '5px' }}
-                >
+                    disabled={!allowance}
+                    sx={{
+                        borderRadius: '20px',
+                        textTransform: 'none',
+                        marginTop: '5px',
+                        '&.Mui-disabled': {
+                            backgroundColor: '#23252B',
+                            color: '#65676C',
+                        },
+                    }}>
                     Confirm Swap
                 </Button>
             </Box>
