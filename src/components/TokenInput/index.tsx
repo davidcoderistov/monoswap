@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Box, InputBase, Typography } from '@mui/material'
 import Token, { TokenProps } from '../Token'
+import { roundTo } from '../../utils'
 
 
 export type TokenInputProps = {
@@ -22,6 +23,18 @@ export default function TokenInput ({ value, onChange, balance, disabled, select
 
     const isSelect = type === 'select'
     const isView = type === 'view'
+
+    const totalBalance = useMemo(() => {
+        if (balance) {
+            const balanceNumber = parseFloat(balance)
+            if (balanceNumber > 1) {
+                return roundTo(balanceNumber, 2).toString()
+            } else {
+                return roundTo(balanceNumber, 7).toString()
+            }
+        }
+        return balance
+    }, [balance])
 
     return (
         <Box
@@ -92,7 +105,7 @@ export default function TokenInput ({ value, onChange, balance, disabled, select
                             color='#8F96AC'
                             sx={{ font: '16px monospace' }}
                         >
-                            Balance: { balance }
+                            Balance: { totalBalance }
                         </Typography>
                     )}
                 </Box>
