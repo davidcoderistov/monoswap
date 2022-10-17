@@ -3,11 +3,9 @@ import { Box, CircularProgress, Typography } from '@mui/material'
 
 
 interface ConfirmationViewProps {
-    sellAmount: string
-    sellTokenSymbol: string
-    buyAmount: string
-    buyTokenSymbol: string
+    message: string
 }
+
 
 export default function ConfirmationView (props: ConfirmationViewProps) {
 
@@ -38,7 +36,7 @@ export default function ConfirmationView (props: ConfirmationViewProps) {
                     Waiting for confirmation
                 </Typography>
                 <Typography fontSize={15}>
-                    Swapping {props.sellAmount} {props.sellTokenSymbol} for {props.buyAmount} {props.buyTokenSymbol}
+                    { props.message }
                 </Typography>
                 <Typography fontSize={12} color='#98A0BC' marginTop='5px'>
                     Confirm this transaction in your wallet
