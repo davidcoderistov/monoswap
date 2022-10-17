@@ -5,10 +5,12 @@ import ActionButton from '../ActionButton'
 import ViewSwapTokens from '../ViewSwapTokens'
 import SwapDetails from '../SwapDetails'
 import AllowanceButton from '../SwapInterface/ActionButton'
+import ConfirmationView from './ConfirmationView'
+import TransactionStatus from './TransactionStatus'
 import Tooltip from '../Tooltip'
 import { Warning } from '@mui/icons-material'
 import { Token } from '../../types'
-import { checkAllowance, approveAllowance } from '../../services'
+import { checkAllowance, approveAllowance, swapTokens } from '../../services'
 import AppContext from '../../context'
 
 
@@ -37,6 +39,9 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
     const [allowance, setAllowance] = useState(false)
     const [approvingAllowance, setApprovingAllowance] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [swapping, setSwapping] = useState(false)
+    const [swapConfirming, setSwapConfirming] = useState(true)
+    const [swapError, setSwapError] = useState(false)
 
     useEffect(() => {
         if (open) {
@@ -62,6 +67,9 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
             setAllowance(false)
             setApprovingAllowance(false)
             setErrorMessage(null)
+            setSwapping(false)
+            setSwapConfirming(true)
+            setSwapError(false)
         }
     }, [open])
 
@@ -103,6 +111,33 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
         tryApproveAllowance()
     }
 
+    const trySwapTokens = async () => {
+        setSwapping(true)
+        setSwapConfirming(true)
+        if (selectedChainId && selectedAccount && sellToken && buyToken) {
+            try {
+                const transactionReceipt = await swapTokens(selectedChainId, sellToken, buyToken, swapDetails.sellAmount, selectedAccount)
+                if (transactionReceipt.status) {
+                    setSwapConfirming(false)
+                    setSwapError(false)
+                    return
+                }
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        setSwapConfirming(false)
+        setSwapError(true)
+    }
+
+    const handleConfirmSwap = () => {
+        trySwapTokens()
+    }
+
+    const handleDismiss = () => {
+        onClose()
+    }
+
     return (
         <Dialog
             open={open}
@@ -134,7 +169,9 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                         alignItems='center'
                         columnGap='10px'
                     >
-                        <Typography>Confirm Swap</Typography>
+                        { !swapping && (
+                            <Typography>Confirm Swap</Typography>
+                        )}
                         { errorMessage && (
                             <Tooltip
                                 title={<Typography variant='subtitle2'>
@@ -160,64 +197,78 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                         <Close />
                     </ActionButton>
                 </Box>
-                <ViewSwapTokens
-                    fromValue={swapDetails.sellAmount}
-                    fromSymbol={sellToken?.symbol ?? ''}
-                    fromImgSrc={sellToken?.thumbnail ?? ''}
-                    toValue={swapDetails.buyAmount}
-                    toSymbol={buyToken?.symbol ?? ''}
-                    toImgSrc={buyToken?.thumbnail ?? ''} />
-                <Typography color='#FFFFFF' fontSize='14px' marginY='15px' marginLeft='15px'>
-                    1 {sellToken?.symbol} = {swapDetails.price} {buyToken?.symbol}
-                </Typography>
-                <SwapDetails
-                    bgcolor='#212429'
-                    borderRadius='20px'
-                    padding='15px'
-                    symbol={buyToken?.symbol ?? ''}
-                    expected={swapDetails.expected}
-                    slippage={swapDetails.slippage}
-                    minimum={swapDetails.minimum} />
-                <Typography
-                    component='div'
-                    color='#989AA0'
-                    margin='15px'
-                    fontSize={12}
-                    fontStyle='italic'
-                >
-                    Output is estimated. You will receive at least <Typography
-                            component='span'
-                            color='#C3C5CB'
-                            fontSize={12}
-                            fontWeight='bold'
-                        >
-                        {swapDetails.minimum} {buyToken?.symbol}
-                    </Typography> or the transaction will revert.
-                </Typography>
-                { !loadingAllowance && !allowance && (
-                    <AllowanceButton
-                        type='actionable'
-                        name={`Allow Monoswap to use your ${sellToken?.symbol}`}
-                        loading={approvingAllowance}
-                        onClick={handleOnApproveAllowance} />
-                )}
-                <Button
-                    variant='contained'
-                    color='primary'
-                    size='large'
-                    fullWidth
-                    disabled={!allowance}
-                    sx={{
-                        borderRadius: '20px',
-                        textTransform: 'none',
-                        marginTop: '5px',
-                        '&.Mui-disabled': {
-                            backgroundColor: '#23252B',
-                            color: '#65676C',
-                        },
-                    }}>
-                    Confirm Swap
-                </Button>
+                { swapping ?
+                    swapConfirming ? (
+                        <ConfirmationView
+                            message={`Swapping ${swapDetails.sellAmount} ${sellToken?.symbol} for ${swapDetails.buyAmount} ${buyToken?.symbol}`} />
+                    ) : (
+                        <TransactionStatus
+                            success={!swapError}
+                            onDismiss={handleDismiss} />
+                    ) : approvingAllowance ? (
+                        <ConfirmationView message={`Approving allowance for ${swapDetails.sellAmount} ${sellToken?.symbol}`} />
+                    ) : (
+                        <>
+                            <ViewSwapTokens
+                                fromValue={swapDetails.sellAmount}
+                                fromSymbol={sellToken?.symbol ?? ''}
+                                fromImgSrc={sellToken?.thumbnail ?? ''}
+                                toValue={swapDetails.buyAmount}
+                                toSymbol={buyToken?.symbol ?? ''}
+                                toImgSrc={buyToken?.thumbnail ?? ''} />
+                            <Typography color='#FFFFFF' fontSize='14px' marginY='15px' marginLeft='15px'>
+                                1 {sellToken?.symbol} = {swapDetails.price} {buyToken?.symbol}
+                            </Typography>
+                            <SwapDetails
+                                bgcolor='#212429'
+                                borderRadius='20px'
+                                padding='15px'
+                                symbol={buyToken?.symbol ?? ''}
+                                expected={swapDetails.expected}
+                                slippage={swapDetails.slippage}
+                                minimum={swapDetails.minimum} />
+                            <Typography
+                                component='div'
+                                color='#989AA0'
+                                margin='15px'
+                                fontSize={12}
+                                fontStyle='italic'
+                            >
+                                Output is estimated. You will receive at least <Typography
+                                component='span'
+                                color='#C3C5CB'
+                                fontSize={12}
+                                fontWeight='bold'
+                            >
+                                {swapDetails.minimum} {buyToken?.symbol}
+                            </Typography> or the transaction will revert.
+                            </Typography>
+                            { !loadingAllowance && !allowance && (
+                                <AllowanceButton
+                                    type='actionable'
+                                    name={`Allow Monoswap to use your ${sellToken?.symbol}`}
+                                    onClick={handleOnApproveAllowance} />
+                            )}
+                            <Button
+                                variant='contained'
+                                color='primary'
+                                size='large'
+                                fullWidth
+                                disabled={!allowance}
+                                sx={{
+                                    borderRadius: '20px',
+                                    textTransform: 'none',
+                                    marginTop: '5px',
+                                    '&.Mui-disabled': {
+                                        backgroundColor: '#23252B',
+                                        color: '#65676C',
+                                    },
+                                }}
+                                onClick={handleConfirmSwap}>
+                                Confirm Swap
+                            </Button>
+                        </>
+                    )}
             </Box>
         </Dialog>
     )
