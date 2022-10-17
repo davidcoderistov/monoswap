@@ -46,7 +46,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
     const [toToken, setToToken] = useState<Token | null>(null)
     const [fromBalance, setFromBalance, trySetFromBalance] = useBalance()
     const [toBalance, setToBalance, trySetToBalance] = useBalance()
-    const [swapInfo, swapDetails, tryFetchSwapDetails, tryFetchSwapDetailsDebounced] = useSwapDetails()
+    const [swapInfo, swapDetails, tryFetchSwapDetails, tryFetchSwapDetailsDebounced, setSwapDetailsOpen] = useSwapDetails()
     const [currToken, setCurrToken] = useState<'from' | 'to'>('from')
 
     const handleSelectToken = (token: Token) => {
@@ -180,6 +180,19 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setSwapOpen(false)
     }
 
+    const handleTransactionSubmitted = () => {
+        setSelectTokenOpen(false)
+        setSwapDetailsOpen(false)
+        setType('from')
+        setFromToken(null)
+        setToToken(null)
+        setFromBalance(undefined)
+        setToBalance(undefined)
+        setCurrToken('from')
+        setFromInputValue('')
+        setToInputValue('')
+    }
+
     const hasInputValue = (inputValue: string) => {
         return inputValue.trim().length > 0 && parseFloat(inputValue) > 0
     }
@@ -267,6 +280,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     slippage: swapDetails?.slippage ?? '',
                     minimum: swapDetails?.minimumReceived ?? '',
                 }}
+                onTransactionSubmitted={handleTransactionSubmitted}
                 onClose={handleCloseSwapModal} />
         </Box>
     )
