@@ -187,3 +187,28 @@ export async function approveAllowance (chainId: number, sellToken: Token, sellA
         throw new Error('Chain id is not valid')
     }
 }
+
+export async function swapTokens (chainId: number, sellToken: Token, buyToken: Token, sellAmount: string, walletAddress: string) {
+    const baseUrl = get0xBaseUrl(chainId)
+    if (baseUrl) {
+        try {
+            const params = {
+                sellToken: sellToken.address,
+                buyToken: buyToken.address,
+                sellAmount: ethers.utils.parseUnits(sellAmount, sellToken.decimals).toString(),
+                takerAddress: walletAddress,
+            }
+            const response = await fetch(
+                `${baseUrl}swap/v1/quote?${qs.stringify(params)}`
+            )
+            const tx = await response.json()
+
+            const web3 = new Web3(Web3.givenProvider)
+            return await web3.eth.sendTransaction(tx)
+        } catch (e) {
+            throw e
+        }
+    } else {
+        throw new Error('Chain id is not valid')
+    }
+}
