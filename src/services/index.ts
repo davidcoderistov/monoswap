@@ -188,7 +188,17 @@ export async function approveAllowance (chainId: number, sellToken: Token, sellA
     }
 }
 
-export async function swapTokens (chainId: number, sellToken: Token, buyToken: Token, sellAmount: string, walletAddress: string) {
+interface QuoteTx {
+    from: string
+    to: string
+    data: string
+    value: string
+    gas: string
+    gasPrice: string
+    chainId: number
+}
+
+export async function getQuote (chainId: number, sellToken: Token, buyToken: Token, sellAmount: string, walletAddress: string): Promise<QuoteTx> {
     const baseUrl = get0xBaseUrl(chainId)
     if (baseUrl) {
         try {
@@ -201,10 +211,7 @@ export async function swapTokens (chainId: number, sellToken: Token, buyToken: T
             const response = await fetch(
                 `${baseUrl}swap/v1/quote?${qs.stringify(params)}`
             )
-            const tx = await response.json()
-
-            const web3 = new Web3(Web3.givenProvider)
-            return await web3.eth.sendTransaction(tx)
+            return await response.json()
         } catch (e) {
             throw e
         }
