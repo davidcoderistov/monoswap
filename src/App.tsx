@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import MainApp from './components/App'
 import AppContext, { Provider, Account, Wallet } from './context'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import { TokenI } from './types'
+import { TokenI, Transaction } from './types'
 import { getTokens } from './services'
 
 
@@ -25,6 +25,7 @@ function App() {
     const [message, setMessage] = useState<string | null>(null)
     const [tokens, setTokens] = useState<TokenI[]>([])
     const [tokensLoading, setTokensLoading] = useState<boolean>(false)
+    const [transactions, setTransactions] = useState<Transaction[]>([])
 
     // Metamask info
     const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false)
@@ -46,6 +47,8 @@ function App() {
         setTokens,
         tokensLoading,
         setTokensLoading,
+        transactions,
+        setTransactions,
         metamask: {
             isInstalled: isMetamaskInstalled,
             setIsInstalled: setIsMetamaskInstalled,
