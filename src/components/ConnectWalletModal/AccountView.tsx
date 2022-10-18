@@ -1,6 +1,8 @@
 import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
+import Transaction from '../Transaction'
 import { SportsVolleyball, MultilineChart } from '@mui/icons-material'
+import { Transaction as TransactionI } from '../../types'
 
 
 const AccountButton = (props: { title: string, onClick: () => void }) => {
@@ -27,6 +29,8 @@ const AccountButton = (props: { title: string, onClick: () => void }) => {
 
 interface AccountViewProps {
     address: string
+    transactions: TransactionI[]
+    onTransactionClick: (transaction: TransactionI) => void
     onDisconnect: () => void
     onChange: () => void
 }
@@ -100,15 +104,36 @@ export default function AccountView (props: AccountViewProps) {
                 </Box>
             </Box>
             <Box mt='15px' />
-            <Box
-                component='div'
-                bgcolor='#2C2F36'
-                padding='20px'
-            >
-                <Typography fontSize={16}>
-                    Your transactions will appear here...
-                </Typography>
-            </Box>
+            { props.transactions.length > 0 ? (
+                <Box
+                    component='div'
+                    paddingX='20px'
+                    paddingBottom='20px'
+                >
+                    { props.transactions.map(transaction => (
+                        <Transaction
+                            key={transaction.hash}
+                            sellTokenSymbol={transaction.sellTokenSymbol}
+                            sellTokenThumbnail={transaction.sellTokenThumbnail}
+                            sellAmount={transaction.sellAmount}
+                            buyTokenSymbol={transaction.buyTokenSymbol}
+                            buyTokenThumbnail={transaction.buyTokenThumbnail}
+                            buyAmount={transaction.buyAmount}
+                            status={transaction.status}
+                            onClick={() => props.onTransactionClick(transaction)} />
+                    ))}
+                </Box>
+            ): (
+                <Box
+                    component='div'
+                    bgcolor='#2C2F36'
+                    padding='20px'
+                >
+                    <Typography fontSize={16}>
+                        Your transactions will appear here...
+                    </Typography>
+                </Box>
+            )}
         </React.Fragment>
     )
 }
