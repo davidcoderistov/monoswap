@@ -7,6 +7,8 @@ import ErrorView from './ErrorView'
 import AccountView from './AccountView'
 import TermsView from './TermsView'
 import AppContext from '../../context'
+import { Transaction } from '../../types'
+import { getChainExplorerUrl } from '../../utils'
 
 
 interface ConnectWalletModalProps {
@@ -22,6 +24,7 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
         setSelectedAccount,
         connectedTo,
         setConnectedTo,
+        transactions,
         metamask
     } = useContext(AppContext)
 
@@ -115,6 +118,13 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
         setIsActionable(true)
     }
 
+    const handleTransactionClick = (transaction: Transaction) => {
+        const baseUrl = getChainExplorerUrl(transaction.chainId)
+        if (baseUrl) {
+            window.open(`${baseUrl}/tx/${transaction.hash}`)
+        }
+    }
+
     return (
         <Dialog
             open={props.open}
@@ -140,6 +150,8 @@ export default function ConnectWalletModal (props: ConnectWalletModalProps) {
                 { isAccountView && selectedAccount ? (
                     <AccountView
                         address={selectedAccount}
+                        transactions={transactions}
+                        onTransactionClick={handleTransactionClick}
                         onDisconnect={handleDisconnectWallet}
                         onChange={handleChangeWallet}
                     />
