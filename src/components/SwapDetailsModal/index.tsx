@@ -13,6 +13,7 @@ import { Token } from '../../types'
 import { checkAllowance, approveAllowance, getQuote } from '../../services'
 import AppContext from '../../context'
 import { Transaction } from '../../types'
+import { getChainExplorerUrl } from '../../utils'
 
 
 interface SwapDetailsI {
@@ -44,6 +45,7 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
     const [swapping, setSwapping] = useState(false)
     const [swapConfirming, setSwapConfirming] = useState(true)
     const [swapError, setSwapError] = useState(false)
+    const [hash, setHash] = useState<string | null>(null)
 
     useEffect(() => {
         if (open) {
@@ -73,6 +75,7 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                 setSwapping(false)
                 setSwapConfirming(true)
                 setSwapError(false)
+                setHash(null)
             }, 100)
         }
     }, [open])
@@ -133,6 +136,7 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                 })
                 setSwapConfirming(false)
                 setSwapError(false)
+                setHash(tx.hash)
                 onTransactionSubmitted({
                     hash: tx.hash,
                     chainId: selectedChainId,
@@ -159,6 +163,15 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
 
     const handleDismiss = () => {
         onClose()
+    }
+
+    const handleViewTransaction = () => {
+        if (selectedChainId && hash) {
+            const baseUrl = getChainExplorerUrl(selectedChainId)
+            if (baseUrl) {
+                window.open(`${baseUrl}/tx/${hash}`)
+            }
+        }
     }
 
     return (
@@ -227,7 +240,8 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                     ) : (
                         <TransactionStatus
                             success={!swapError}
-                            onDismiss={handleDismiss} />
+                            onDismiss={handleDismiss}
+                            onView={handleViewTransaction} />
                     ) : approvingAllowance ? (
                         <ConfirmationView message={`Approving allowance for ${swapDetails.sellAmount} ${sellToken?.symbol}`} />
                     ) : (
