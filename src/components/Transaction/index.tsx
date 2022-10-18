@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Typography, CircularProgress } from '@mui/material'
+import { Box, Typography, CircularProgress, BoxProps } from '@mui/material'
 import { CheckCircleOutline } from '@mui/icons-material'
 import Image from '../Image'
 
@@ -14,9 +14,10 @@ interface TransactionProps {
     status: 'pending' | 'confirmed'
 }
 
-export default function Transaction (props: TransactionProps) {
+export default function Transaction ({sellTokenSymbol, sellTokenThumbnail, sellAmount,
+                                         buyTokenSymbol, buyTokenThumbnail, buyAmount, status, ...rest}: TransactionProps & BoxProps) {
 
-    const pending = props.status === 'pending'
+    const pending = status === 'pending'
 
     return (
         <Box
@@ -25,6 +26,7 @@ export default function Transaction (props: TransactionProps) {
             flexDirection='row'
             justifyContent='space-between'
             alignItems='center'
+            {...rest}
         >
             <Box
                 component='div'
@@ -34,12 +36,12 @@ export default function Transaction (props: TransactionProps) {
             >
                 <Box sx={{ flex: '0 0 auto' }}>
                     <Image
-                        src={props.sellTokenThumbnail}
-                        alt={props.sellTokenSymbol}
+                        src={sellTokenThumbnail}
+                        alt={sellTokenSymbol}
                         size={20} />
                     <Image
-                        src={props.buyTokenThumbnail}
-                        alt={props.buyTokenSymbol}
+                        src={buyTokenThumbnail}
+                        alt={buyTokenSymbol}
                         sx={{ position: 'relative', left: '-10px', top: '10px', }}
                         size={20} />
                 </Box>
@@ -51,7 +53,7 @@ export default function Transaction (props: TransactionProps) {
                         &nbsp;
                     </Typography>
                     <Typography component='span' color='#FFFFFF' fontSize={14}>
-                        {props.sellAmount} {props.sellTokenSymbol}
+                        {sellAmount} {sellTokenSymbol}
                     </Typography>
                     <Typography component='span' fontSize={14}>
                         &nbsp;
@@ -63,7 +65,7 @@ export default function Transaction (props: TransactionProps) {
                         &nbsp;
                     </Typography>
                     <Typography component='span' color='#FFFFFF' fontSize={14}>
-                        {props.buyAmount} {props.buyTokenSymbol}
+                        {buyAmount} {buyTokenSymbol}
                     </Typography>
                 </Box>
             </Box>
