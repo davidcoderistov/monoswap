@@ -34,4 +34,14 @@ export interface Token {
     pinned: boolean
 }
 
-export type Blockchain = 'eth' | 'polygon' | 'avalanche' | 'optimism' | 'arbitrum'
+export interface Transaction {
+    hash: string
+    chainId: number
+    sellTokenSymbol: string
+    sellTokenThumbnail: string
+    sellAmount: string
+    buyTokenSymbol: string
+    buyTokenThumbnail: string
+    buyAmount: string
+    status: 'pending' | 'confirmed'
+}
