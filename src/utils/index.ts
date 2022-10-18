@@ -355,6 +355,23 @@ export function get0xContractAddress (chainId: number) {
     }
 }
 
+export function getChainExplorerUrl (chainId: number) {
+    switch (chainId) {
+        case 1:
+            return 'https://etherscan.io'
+        case 5:
+            return 'https://goerli.etherscan.io'
+        case 137:
+            return 'https://polygonscan.com'
+        case 10:
+            return 'https://optimistic.etherscan.io'
+        case 42161:
+            return 'https://arbiscan.io'
+        default:
+            return null
+    }
+}
+
 export function roundTo (number: number, precision: number) {
     return parseFloat(number.toFixed(precision))
 }
