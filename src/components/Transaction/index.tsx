@@ -12,10 +12,11 @@ interface TransactionProps {
     buyTokenThumbnail: string
     buyAmount: string
     status: 'pending' | 'confirmed'
+    onClick: () => void
 }
 
 export default function Transaction ({sellTokenSymbol, sellTokenThumbnail, sellAmount,
-                                         buyTokenSymbol, buyTokenThumbnail, buyAmount, status, ...rest}: TransactionProps & BoxProps) {
+                                         buyTokenSymbol, buyTokenThumbnail, buyAmount, status, onClick, ...rest}: TransactionProps & BoxProps) {
 
     const pending = status === 'pending'
 
@@ -27,6 +28,8 @@ export default function Transaction ({sellTokenSymbol, sellTokenThumbnail, sellA
             justifyContent='space-between'
             alignItems='center'
             {...rest}
+            sx={{ '&:hover': { backgroundColor: '#2C2F36' }, cursor: 'pointer', paddingY: '10px', borderRadius: '10px', paddingX: '5px' }}
+            onClick={onClick}
         >
             <Box
                 component='div'
