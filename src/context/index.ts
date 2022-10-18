@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { ethers } from 'ethers'
-import { TokenI } from '../types'
+import { TokenI, Transaction } from '../types'
 
 export type Provider = ethers.providers.Web3Provider | null
 
@@ -32,6 +32,8 @@ export interface Context {
     setTokens: (tokens: TokenI[]) => void
     tokensLoading: boolean
     setTokensLoading: (tokensLoading: boolean) => void
+    transactions: Transaction[]
+    setTransactions: (transactions: Transaction[]) => void
     metamask: Metamask
 }
 
@@ -50,6 +52,8 @@ export const defaultValue: Context = {
     setTokens: () => {},
     tokensLoading: false,
     setTokensLoading: () => {},
+    transactions: [],
+    setTransactions: () => {},
     metamask: {
         isInstalled: false,
         setIsInstalled: () => {},
