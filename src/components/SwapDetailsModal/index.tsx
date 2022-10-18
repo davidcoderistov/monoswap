@@ -10,8 +10,9 @@ import TransactionStatus from './TransactionStatus'
 import Tooltip from '../Tooltip'
 import { Warning } from '@mui/icons-material'
 import { Token } from '../../types'
-import { checkAllowance, approveAllowance, swapTokens } from '../../services'
+import { checkAllowance, approveAllowance, getQuote } from '../../services'
 import AppContext from '../../context'
+import { Transaction } from '../../types'
 
 
 interface SwapDetailsI {
@@ -28,12 +29,13 @@ interface SwapDetailsModalProps {
     sellToken: Token | null
     buyToken: Token | null
     swapDetails: SwapDetailsI
+    onTransactionSubmitted: (transaction: Transaction) => void
     onClose: () => void
 }
 
-export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onClose }: SwapDetailsModalProps) {
+export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onTransactionSubmitted, onClose }: SwapDetailsModalProps) {
 
-    const { selectedChainId, selectedAccount } = useContext(AppContext)
+    const { selectedChainId, selectedAccount, provider } = useContext(AppContext)
 
     const [loadingAllowance, setLoadingAllowance] = useState(true)
     const [allowance, setAllowance] = useState(false)
@@ -114,14 +116,33 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
     const trySwapTokens = async () => {
         setSwapping(true)
         setSwapConfirming(true)
-        if (selectedChainId && selectedAccount && sellToken && buyToken) {
+        if (selectedChainId && selectedAccount && sellToken && buyToken && provider) {
             try {
-                const transactionReceipt = await swapTokens(selectedChainId, sellToken, buyToken, swapDetails.sellAmount, selectedAccount)
-                if (transactionReceipt.status) {
-                    setSwapConfirming(false)
-                    setSwapError(false)
-                    return
-                }
+                const quoteTx = await getQuote(selectedChainId, sellToken, buyToken, swapDetails.sellAmount, selectedAccount)
+                const signer = provider.getSigner()
+                const tx = await signer.sendTransaction({
+                    from: quoteTx.from,
+                    to: quoteTx.to,
+                    data: quoteTx.data,
+                    value: quoteTx.value,
+                    gasLimit: quoteTx.gas,
+                    gasPrice: quoteTx.gasPrice,
+                    chainId: quoteTx.chainId,
+                })
+                setSwapConfirming(false)
+                setSwapError(false)
+                onTransactionSubmitted({
+                    hash: tx.hash,
+                    chainId: selectedChainId,
+                    sellTokenSymbol: sellToken.symbol,
+                    sellTokenThumbnail: sellToken.thumbnail,
+                    sellAmount: swapDetails.sellAmount,
+                    buyTokenSymbol: buyToken.symbol,
+                    buyTokenThumbnail: buyToken.thumbnail,
+                    buyAmount: swapDetails.buyAmount,
+                    status: 'pending',
+                })
+                return
             } catch (e) {
                 console.error(e)
             }
