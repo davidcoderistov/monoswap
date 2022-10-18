@@ -65,13 +65,15 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
 
     useEffect(() => {
         if (!open) {
-            setLoadingAllowance(true)
-            setAllowance(false)
-            setApprovingAllowance(false)
-            setErrorMessage(null)
-            setSwapping(false)
-            setSwapConfirming(true)
-            setSwapError(false)
+            setTimeout(() => {
+                setLoadingAllowance(true)
+                setAllowance(false)
+                setApprovingAllowance(false)
+                setErrorMessage(null)
+                setSwapping(false)
+                setSwapConfirming(true)
+                setSwapError(false)
+            }, 100)
         }
     }, [open])
 
