@@ -10,6 +10,7 @@ import SwapDetailsModal from '../SwapDetailsModal'
 import { Token } from '../../types'
 import { isChainSupported } from '../../utils'
 import AppContext from '../../context'
+import { Transaction } from '../../types'
 
 
 export interface SwapInterfaceProps {
@@ -22,6 +23,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         connectedTo,
         selectedAccount,
         selectedChainId,
+        transactions,
+        setTransactions,
     } = useContext(AppContext)
 
     const [selectTokenOpen, setSelectTokenOpen] = useState(false)
@@ -180,7 +183,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setSwapOpen(false)
     }
 
-    const handleTransactionSubmitted = () => {
+    const handleTransactionSubmitted = (transaction: Transaction) => {
+        setTransactions([...transactions, {...transaction}])
         setSelectTokenOpen(false)
         setSwapDetailsOpen(false)
         setType('from')
