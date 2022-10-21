@@ -197,6 +197,22 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
         setToInputValue('')
     }
 
+    const handleTransactionMined = (transaction: Transaction, sellToken: Token, buyToken: Token) => {
+        setTransactions([...transactions, {...transaction}])
+        if (fromToken) {
+            const fromId = fromToken.id
+            if (fromId === sellToken.id || fromId === buyToken.id) {
+                trySetFromBalance(fromToken.address, fromToken.decimals)
+            }
+        }
+        if (toToken) {
+            const toId = toToken.id
+            if (toId === sellToken.id || toId === buyToken.id) {
+                trySetToBalance(toToken.address, toToken.decimals)
+            }
+        }
+    }
+
     const hasInputValue = (inputValue: string) => {
         return inputValue.trim().length > 0 && parseFloat(inputValue) > 0
     }
@@ -285,6 +301,7 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
                     minimum: swapDetails?.minimumReceived ?? '',
                 }}
                 onTransactionSubmitted={handleTransactionSubmitted}
+                onTransactionMined={handleTransactionMined}
                 onClose={handleCloseSwapModal} />
         </Box>
     )

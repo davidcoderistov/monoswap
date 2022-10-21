@@ -13,7 +13,7 @@ import { Token } from '../../types'
 import { checkAllowance, approveAllowance, getQuote } from '../../services'
 import AppContext from '../../context'
 import { Transaction } from '../../types'
-import { getChainExplorerUrl } from '../../utils'
+import { getChainExplorerUrl, roundTo } from '../../utils'
 
 
 interface SwapDetailsI {
@@ -31,10 +31,11 @@ interface SwapDetailsModalProps {
     buyToken: Token | null
     swapDetails: SwapDetailsI
     onTransactionSubmitted: (transaction: Transaction) => void
+    onTransactionMined: (transaction: Transaction, sellToken: Token, buyToken: Token) => void
     onClose: () => void
 }
 
-export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onTransactionSubmitted, onClose }: SwapDetailsModalProps) {
+export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetails, onTransactionSubmitted, onTransactionMined, onClose }: SwapDetailsModalProps) {
 
     const { selectedChainId, selectedAccount, provider } = useContext(AppContext)
 
@@ -137,16 +138,22 @@ export default function SwapDetailsModal ({ open, sellToken, buyToken, swapDetai
                 setSwapConfirming(false)
                 setSwapError(false)
                 setHash(tx.hash)
-                onTransactionSubmitted({
+                const txDetails = {
                     hash: tx.hash,
                     chainId: selectedChainId,
                     sellTokenSymbol: sellToken.symbol,
                     sellTokenThumbnail: sellToken.thumbnail,
-                    sellAmount: swapDetails.sellAmount,
+                    sellAmount: roundTo(parseFloat(swapDetails.sellAmount), 6).toString(),
                     buyTokenSymbol: buyToken.symbol,
                     buyTokenThumbnail: buyToken.thumbnail,
-                    buyAmount: swapDetails.buyAmount,
+                    buyAmount: roundTo(parseFloat(swapDetails.buyAmount), 6).toString(),
+                }
+                onTransactionSubmitted({
+                    ...txDetails,
                     status: 'pending',
+                })
+                provider.waitForTransaction(tx.hash).then(() => {
+                    onTransactionMined({...txDetails, status: 'confirmed'}, sellToken, buyToken)
                 })
                 return
             } catch (e) {
