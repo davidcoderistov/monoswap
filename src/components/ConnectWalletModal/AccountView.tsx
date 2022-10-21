@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import Transaction from '../Transaction'
 import { SportsVolleyball, MultilineChart } from '@mui/icons-material'
 import { Transaction as TransactionI } from '../../types'
+import { getChainExplorerUrl } from '../../utils'
+import AppContext from '../../context'
 
 
 const AccountButton = (props: { title: string, onClick: () => void }) => {
@@ -37,7 +39,17 @@ interface AccountViewProps {
 
 export default function AccountView (props: AccountViewProps) {
 
+    const context = useContext(AppContext)
+
     const length = props.address.length
+
+    const baseUrl = getChainExplorerUrl(context.selectedChainId)
+
+    const handleClickViewOnExplorer = () => {
+        if (baseUrl) {
+            window.open(`${baseUrl}/address/${props.address}`)
+        }
+    }
 
     return (
         <React.Fragment>
@@ -97,6 +109,7 @@ export default function AccountView (props: AccountViewProps) {
                             size='small'
                             variant='text'
                             startIcon={<MultilineChart />}
+                            onClick={handleClickViewOnExplorer}
                         >
                             View on Explorer
                         </Button>
