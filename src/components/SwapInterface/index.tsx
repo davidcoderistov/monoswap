@@ -133,8 +133,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             buyTokenAddress: buyToken.address,
             buyTokenDecimals: buyToken.decimals,
             sellAmount: amount,
-            onSuccess: ({ buyAmount }: SuccessFuncArgs) => {
-                setToInputValue(buyAmount)
+            onSuccess: ({ expectedOutput }: SuccessFuncArgs) => {
+                setToInputValue(expectedOutput)
             },
             onError: () => {
                 setToInputValue('')
@@ -156,8 +156,8 @@ export default function SwapInterface ({ onConnectWallet }: SwapInterfaceProps) 
             buyTokenAddress: buyToken.address,
             buyTokenDecimals: buyToken.decimals,
             sellAmount: amount,
-            onSuccess: ({ buyAmount }: SuccessFuncArgs) => {
-                setFromInputValue(buyAmount)
+            onSuccess: ({ expectedOutput }: SuccessFuncArgs) => {
+                setFromInputValue(expectedOutput)
             },
             onError: () => {
                 setFromInputValue('')
