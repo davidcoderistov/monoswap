@@ -8,6 +8,9 @@ import { ERC20_ABI } from '../abis/erc20'
 import { Token } from '../types'
 
 
+const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY as string
+const ZERO_X_API_KEY = process.env.REACT_APP_0x_API_KEY as string
+
 interface BridgeTokenI {
     tokenAddress: string
 }
@@ -41,8 +44,6 @@ export async function getTokens (): Promise<TokenI[]> {
         throw e
     }
 }
-
-const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_API_KEY
 
 export async function getTokenBalance (chainId: number, ownerAddress: string, tokenAddress: string, tokenDecimals: number) {
 
@@ -118,9 +119,12 @@ export async function getSwapDetails (swapDetails: SwapDetailsArgs, reverse = fa
                 buyToken: swapDetails.buyTokenAddress,
                 sellAmount: ethers.utils.parseUnits(swapDetails.sellAmount, swapDetails.sellTokenDecimals).toString(),
             }
-            const response = await fetch(
-                `${baseUrl}swap/v1/price?${qs.stringify(params)}`
-            )
+            const response = await fetch(`${baseUrl}swap/v1/price?${qs.stringify(params)}`, {
+                method: 'GET',
+                headers: {
+                    '0x-api-key': ZERO_X_API_KEY
+                }
+            })
             const details = await response.json()
 
             const buyAmount = parseFloat(
@@ -208,9 +212,12 @@ export async function getQuote (chainId: number, sellToken: Token, buyToken: Tok
                 sellAmount: ethers.utils.parseUnits(sellAmount, sellToken.decimals).toString(),
                 takerAddress: walletAddress,
             }
-            const response = await fetch(
-                `${baseUrl}swap/v1/quote?${qs.stringify(params)}`
-            )
+            const response = await fetch(`${baseUrl}swap/v1/quote?${qs.stringify(params)}`, {
+                method: 'GET',
+                headers: {
+                    '0x-api-key': ZERO_X_API_KEY
+                }
+            })
             return await response.json()
         } catch (e) {
             throw e
