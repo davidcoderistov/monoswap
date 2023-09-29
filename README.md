@@ -1,4 +1,7 @@
-![monoswap](https://user-images.githubusercontent.com/85624034/196651582-261492cd-c17b-4a03-84e6-d54f5c6ca943.png)
+## Monoswap
+
+![monoswap](https://user-images.githubusercontent.com/85624034/197181924-02a8cd10-7559-4946-aebd-27d091edadf4.png)
+
 
 Monoswap is a decentralized exchange (DEX) multi-chain dApp that facilitates trading of ERC20 tokens. It uses Uniswap [Token Lists](https://tokenlists.org/), a new community-led standard for creating lists of ERC20 tokens to improve discoverability and trust in ERC20 token lists in a manner that is inclusive, transparent, and decentralized. Swapping is powered by the [0x Protocol](https://www.0x.org/), an open protocol that enables the decentralized exchange of tokens on the Ethereum blockchain.
 
@@ -20,7 +23,7 @@ Monoswap is a decentralized exchange (DEX) multi-chain dApp that facilitates tra
 
 #### `REACT_APP_ALCHEMY_API_KEY`
 
-Set up local environment variable by creating a .env.development.local file in the root of your project and add your [Alchemy](https://www.alchemy.com/) API key.
+Set up local environment variable by creating a .env.development.local file in the root of your project and adding your [Alchemy](https://www.alchemy.com/) API key.
 
 #### `npm install`
 
@@ -39,7 +42,7 @@ To contribute to Monoswap, follow these steps:
 1. Fork this repository
 2. Create a branch: `git checkout -b <branch_name>`
 3. Make your changes and commit them: `git commit -m '<commit_message>'`
-4. Push to the original branch: `git push origin Monoswap/<location>`
+4. Push to the original branch: `git push origin monoswap/<location>`
 5. Create the pull request
 
 Alternatively see the GitHub documentation on [creating a pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).
