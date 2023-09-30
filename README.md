@@ -1,4 +1,4 @@
-## Monoswap
+## Monoswap [ec2-16-171-240-55.eu-north-1.compute.amazonaws.com:3002](http://ec2-16-171-240-55.eu-north-1.compute.amazonaws.com:3002/)
 
 ![monoswap](https://user-images.githubusercontent.com/85624034/197181924-02a8cd10-7559-4946-aebd-27d091edadf4.png)
 
@@ -14,10 +14,10 @@ Monoswap is a decentralized exchange (DEX) multi-chain dApp that facilitates tra
 - View transactions history and transaction status
 
 ### API endpoints
-- [tokens.uniswap.org/](https://tokens.uniswap.org/) for getting the token lists
+- [tokens.uniswap.org](https://tokens.uniswap.org/) for getting the token lists
 - [alchemy_getTokenBalances](https://docs.alchemy.com/reference/alchemy-gettokenbalances) for getting the token balances
-- [/swap/v1/quote](https://docs.0x.org/0x-api-swap/api-references/get-swap-v1-quote) for getting the quote for buying or selling any ERC20 token
-- [/swap/v1/price](https://docs.0x.org/0x-api-swap/api-references/get-swap-v1-price) for getting the best price for buying or selling any ERC20 token
+- [/swap/v1/quote](https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-quote) for getting the quote for buying or selling any ERC20 token
+- [/swap/v1/price](https://0x.org/docs/0x-swap-api/api-references/get-swap-v1-price) for getting the best price for buying or selling any ERC20 token
 
 ### Using Monoswap
 
