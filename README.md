@@ -1,4 +1,4 @@
-## Monoswap - [ec2-16-171-240-55.eu-north-1.compute.amazonaws.com:3002](http://ec2-16-171-240-55.eu-north-1.compute.amazonaws.com:3002/)
+## Monoswap - [ec2-16-171-240-55.eu-north-1.compute.amazonaws.com:3002](http://ec2-51-20-77-48.eu-north-1.compute.amazonaws.com:3002/)
 
 ![monoswap](https://user-images.githubusercontent.com/85624034/197181924-02a8cd10-7559-4946-aebd-27d091edadf4.png)
 
